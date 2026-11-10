@@ -15,15 +15,22 @@ import html as htmllib
 import json
 import logging
 import os
+import random
 import re
 import secrets
+import smtplib
+import ssl
 import threading
 import time
 import urllib.error
 import urllib.parse
 import urllib.request
 import zlib
+from datetime import datetime, timedelta
+from email.message import EmailMessage
+from email.utils import formatdate, make_msgid
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from zoneinfo import ZoneInfo
 
 BILLBERRIES = "https://billberries.de"
 LOCATION = os.environ.get("BB_LOCATION", "0001")
@@ -39,7 +46,21 @@ APP_DIR = os.path.dirname(os.path.abspath(__file__))
 INDEX_FILE = os.path.join(APP_DIR, "index.html")
 PROXY_SECRET = os.environ.get("PROXY_SECRET", "")
 ALLOWED_USER = os.environ.get("ALLOWED_USER", "")
-KEEPALIVE_SECONDS = float(os.environ.get("KEEPALIVE_HOURS", "4")) * 3600
+TZ = ZoneInfo("Europe/Berlin")
+# Daily scan for partner searches: SCAN_TIME (local) plus a random offset of up to SCAN_JITTER_MINUTES.
+SCAN_TIME = os.environ.get("SCAN_TIME", "08:00")
+SCAN_JITTER_MINUTES = int(os.environ.get("SCAN_JITTER_MINUTES", "180"))
+APP_URL = os.environ.get("APP_URL", "")
+NOTIFY_LANG = os.environ.get("NOTIFY_LANG", "de")
+SMTP = {
+    "host": os.environ.get("SMTP_HOST", ""),
+    "port": int(os.environ.get("SMTP_PORT", "587")),
+    "security": os.environ.get("SMTP_SECURITY", "starttls").lower(),  # starttls | ssl | none
+    "user": os.environ.get("SMTP_USER", ""),
+    "password": os.environ.get("SMTP_PASSWORD", ""),
+    "from": os.environ.get("SMTP_FROM", ""),
+    "to": [a.strip() for a in os.environ.get("NOTIFY_TO", "").split(",") if a.strip()],
+}
 PORT = int(os.environ.get("PORT", "8080"))
 CLIENT_HEADER = "billberries-mobile"
 
@@ -246,7 +267,7 @@ def login_with_code(text):
     result = upstream("GET", path)
     if not result["cookie"] or result["status"] >= 400:
         raise AppError(400, "login-rejected", "Billberries rejected the code. Each code works only once and briefly; please repeat the Google login.")
-    update_state(session=result["cookie"], loginAt=int(time.time()), loggedOutAt=None, player=None)
+    update_state(session=result["cookie"], loginAt=int(time.time()), loggedOutAt=None, player=None, loginMailAt=None)
     try:
         billberries("GET", OVERVIEW_PATH)
     except LoginRequired:
@@ -348,18 +369,178 @@ def validate_settings(data):
             "size": str(data.get("size", ""))[:40], "cloth": str(data.get("cloth", ""))[:40]}
 
 
-def keepalive():
-    while True:
-        time.sleep(KEEPALIVE_SECONDS)
+# ---------- e-mail notifications ----------
+
+MAIL_TEXT = {
+    "de": {
+        "days": ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"],
+        "subject_one": "Billberries: {player} sucht einen Spielpartner ({when})",
+        "subject_many": "Billberries: {n} Spielpartner-Suchen",
+        "intro": "Neu im Kalender des BSC Karlsruhe – jemand sucht einen Spielpartner:",
+        "item": "• {player} — {when} — Tisch {number} ({size}, {cloth})",
+        "unknown": "unbekannt", "join": "Mitspielen: {url}", "original": "Original-Kalender: {url}",
+        "footer": "– Billberries Mobile (automatische Nachricht, Prüfung einmal täglich)",
+        "login_subject": "Billberries Mobile: Bitte erneut bei Billberries anmelden",
+        "login_body": "Die Billberries-Anmeldung des Servers ist abgelaufen. Bis zur neuen Anmeldung kann Billberries Mobile "
+                      "weder buchen noch Spielpartner-Suchen melden.\n\nNeu anmelden: {url}",
+        "test_subject": "Billberries Mobile: Test-E-Mail",
+        "test_body": "Der E-Mail-Versand von Billberries Mobile funktioniert.",
+    },
+    "en": {
+        "days": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+        "subject_one": "Billberries: {player} is looking for a partner ({when})",
+        "subject_many": "Billberries: {n} players looking for a partner",
+        "intro": "New in the BSC Karlsruhe calendar – someone is looking for a partner:",
+        "item": "• {player} — {when} — table {number} ({size}, {cloth})",
+        "unknown": "unknown", "join": "Join: {url}", "original": "Original calendar: {url}",
+        "footer": "– Billberries Mobile (automatic message, checked once a day)",
+        "login_subject": "Billberries Mobile: please log in to Billberries again",
+        "login_body": "The server's Billberries login has expired. Until you log in again, Billberries Mobile can neither "
+                      "book nor report partner searches.\n\nLog in: {url}",
+        "test_subject": "Billberries Mobile: test e-mail",
+        "test_body": "Sending e-mail from Billberries Mobile works.",
+    },
+}
+
+
+def mail_text():
+    return MAIL_TEXT.get(NOTIFY_LANG, MAIL_TEXT["en"])
+
+
+def mail_configured():
+    return bool(SMTP["host"] and SMTP["from"] and SMTP["to"])
+
+
+def send_mail(subject, body):
+    if not mail_configured():
+        raise AppError(409, "mail-not-configured", "E-mail is not configured (SMTP_HOST, SMTP_FROM, NOTIFY_TO).")
+    message = EmailMessage()
+    message["Subject"], message["From"], message["To"] = subject, SMTP["from"], ", ".join(SMTP["to"])
+    message["Date"] = formatdate(localtime=True)
+    message["Message-ID"] = make_msgid(domain=SMTP["from"].rpartition("@")[2] or None)
+    message.set_content(body)
+    context = ssl.create_default_context()
+    try:
+        if SMTP["security"] == "ssl":
+            server = smtplib.SMTP_SSL(SMTP["host"], SMTP["port"], timeout=30, context=context)
+        else:
+            server = smtplib.SMTP(SMTP["host"], SMTP["port"], timeout=30)
+        with server:
+            if SMTP["security"] == "starttls":
+                server.starttls(context=context)
+            if SMTP["user"]:
+                server.login(SMTP["user"], SMTP["password"])
+            server.send_message(message)
+    except (OSError, smtplib.SMTPException) as e:
+        log.warning("sending mail failed: %s", e)
+        raise AppError(502, "mail-failed", f"Sending the e-mail failed: {e}", reason=str(e)) from e
+    log.info("mail sent: %s", subject)
+
+
+def when_text(start, end, with_year=True):
+    a, b = datetime.fromtimestamp(start, TZ), datetime.fromtimestamp(end, TZ)
+    date = a.strftime("%d.%m.%Y" if with_year else "%d.%m.")
+    return f"{mail_text()['days'][a.weekday()]}, {date}, {a:%H:%M}–{b:%H:%M}"
+
+
+def is_seeking(booking):
+    return "Suche Spielpartner" in booking["lines"]
+
+
+def seeking_key(booking):
+    return f'{booking["table"]}|{booking["epoch"]}|{norm_name(booking["lines"][0] if booking["lines"] else "")}'
+
+
+def maybe_send_login_mail():
+    """One reminder per expired login; a new login resets it."""
+    state = load_state()
+    sent, logged_out = state.get("loginMailAt") or 0, state.get("loggedOutAt") or 0
+    if not mail_configured() or (sent and sent >= logged_out):
+        return False
+    text = mail_text()
+    send_mail(text["login_subject"], text["login_body"].format(url=APP_URL or BILLBERRIES))
+    update_state(loginMailAt=int(time.time()))
+    return True
+
+
+def scan_once(reason):
+    """Report partner searches by other players that appeared since the last scan."""
+    log.info("scan (%s)", reason)
+    result = {"at": int(time.time()), "reason": reason, "loggedIn": True, "open": 0, "new": 0, "mailed": False}
+    try:
         if not load_state().get("session"):
+            raise LoginRequired()
+        calendar = parse_calendar(billberries("GET", OVERVIEW_PATH))
+    except LoginRequired:
+        result["loggedIn"] = False
+        try:
+            result["mailed"] = maybe_send_login_mail()
+        except AppError as e:
+            result["error"] = e.code
+        update_state(lastScan=result)
+        return result
+    player = get_player(calendar)
+    now = time.time()
+    open_searches = sorted((b for b in calendar["bookings"]
+                            if is_seeking(b) and b["end"] > now and not is_mine(b, player)), key=lambda b: b["epoch"])
+    seen = {k: v for k, v in (load_state().get("seenSeeking") or {}).items() if v > now}
+    new = [b for b in open_searches if seeking_key(b) not in seen]
+    result.update(open=len(open_searches), new=len(new))
+    if new and mail_configured():
+        text = mail_text()
+        tables = {t["id"]: t for t in load_settings()["tables"]}
+        items = []
+        for b in new:
+            t = tables.get(b["table"], {})
+            items.append(text["item"].format(player=b["lines"][0], when=when_text(b["epoch"], b["end"]), number=t.get("number", b["table"]),
+                                             size=t.get("size") or text["unknown"], cloth=t.get("cloth") or text["unknown"]))
+        links = [text["join"].format(url=APP_URL)] if APP_URL else []
+        links.append(text["original"].format(url=BILLBERRIES + OVERVIEW_PATH))
+        subject = (text["subject_one"].format(player=new[0]["lines"][0], when=when_text(new[0]["epoch"], new[0]["end"], with_year=False))
+                   if len(new) == 1 else text["subject_many"].format(n=len(new)))
+        try:
+            send_mail(subject, "\n".join([text["intro"], "", *items, "", *links, "", text["footer"]]))
+            result["mailed"] = True
+        except AppError as e:
+            result["error"] = e.code  # not marked as seen: retried at the next scan
+    elif new:
+        log.info("%d new partner search(es); e-mail not configured", len(new))
+    if result["mailed"]:
+        seen.update({seeking_key(b): b["end"] for b in new})
+    update_state(seenSeeking=seen, lastScan=result)
+    return result
+
+
+def scan_time_on(day):
+    hour, minute = (int(x) for x in SCAN_TIME.split(":"))
+    base = datetime(day.year, day.month, day.day, hour, minute, tzinfo=TZ)
+    return base.timestamp() + random.uniform(0, SCAN_JITTER_MINUTES * 60)
+
+
+def scanner():
+    """Once a day at SCAN_TIME plus a random offset; the next run survives restarts, a missed run happens at startup."""
+    time.sleep(10)
+    while True:
+        now = time.time()
+        due = load_state().get("nextScanAt")
+        if not due:
+            today = datetime.fromtimestamp(now, TZ).date()
+            due = scan_time_on(today)
+            if due <= now:
+                due = scan_time_on(today + timedelta(days=1))
+            update_state(nextScanAt=int(due))
+            log.info("next scan at %s", datetime.fromtimestamp(due, TZ).isoformat())
+        if due > now:
+            time.sleep(min(300, due - now))
             continue
         try:
-            billberries("GET", OVERVIEW_PATH)
-            log.info("keepalive ok")
-        except LoginRequired:
-            log.warning("keepalive: login required")
+            scan_once("scheduled")
         except Exception:
-            log.exception("keepalive failed")
+            log.exception("scan failed")
+        tomorrow = datetime.fromtimestamp(time.time(), TZ).date() + timedelta(days=1)
+        due = scan_time_on(tomorrow)
+        update_state(nextScanAt=int(due))
+        log.info("next scan at %s", datetime.fromtimestamp(due, TZ).isoformat())
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -457,7 +638,15 @@ class Handler(BaseHTTPRequestHandler):
                     "loginAt": state.get("loginAt"),
                     "lastOkAt": state.get("lastOkAt"),
                     "renewedAt": state.get("renewedAt"),
+                    "notify": {"configured": mail_configured(), "to": SMTP["to"],
+                               "nextScanAt": state.get("nextScanAt"), "lastScan": state.get("lastScan")},
                 })
+            if method == "POST" and path == "/api/admin/scan":
+                return self.json(200, scan_once("manual"))
+            if method == "POST" and path == "/api/admin/test-mail":
+                text = mail_text()
+                send_mail(text["test_subject"], text["test_body"])
+                return self.json(200, {"ok": True, "to": SMTP["to"]})
             if method == "GET" and path == "/api/me":
                 return self.json(200, {"player": get_player()})
             if method == "GET" and path == "/api/settings":
@@ -504,7 +693,7 @@ def main():
     if not PROXY_SECRET or not ALLOWED_USER:
         log.error("PROXY_SECRET or ALLOWED_USER is not set; all requests except /healthz will be refused")
     os.makedirs(DATA_DIR, exist_ok=True)
-    threading.Thread(target=keepalive, daemon=True).start()
+    threading.Thread(target=scanner, daemon=True).start()
     server = ThreadingHTTPServer(("0.0.0.0", PORT), Handler)
     server.daemon_threads = True
     log.info("listening on port %d", PORT)

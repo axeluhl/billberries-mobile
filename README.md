@@ -7,6 +7,7 @@ Phone-first alternative to the [BSC Karlsruhe Billberries calendar](https://bill
 - **Your reservations:** the app learns your Billberries player name (e.g. “A. U.”) from the reservation form after each Billberries login, lists your upcoming reservations under *My reservations* with a one-tap **Cancel** (in-app confirmation), and marks the times you already play in the timeline.
 - **No overlapping bookings:** the page doesn't offer times that overlap one of your reservations, and the server independently rejects a booking that overlaps one of yours on any table or any existing booking on the same table — Billberries itself would accept both.
 - **Solo training or a game with a partner** in one step, without the original site's extra round trip.
+- **Partner-search e-mails:** once a day the server looks for new reservations where another player is looking for a partner (*Suche Spielpartner*) and e-mails them to you, with player, date, time and table including its size and cloth. Days with your own reservations, other players' reservations and partner searches are marked in the date row.
 - **Languages:** English, German, French, Spanish, Italian, Portuguese and Dutch, following the browser's language; the chooser in the header overrides it per device. Dates and times use the chosen locale.
 
 ## Architecture
@@ -46,7 +47,24 @@ Google only redirects to Billberries' registered address, `https://billberries.d
 2. On the Billberries error page, copy the full address.
 3. Back in the app, tap **Einfügen** (or paste into the field), then **Anmeldung abschließen**. The container exchanges the code with Billberries and stores the session.
 
-Any browser signed into the Google account works for this, including a desktop. Billberries does **not** renew its session cookie on use, so a session lasts Billberries' fixed maximum (Flask's default is 31 days; their actual setting is unknown). The footer shows since when the session exists; the container checks it every few hours (`KEEPALIVE_HOURS`) and the app asks for a new login once Billberries rejects it. **Billberries-Anmeldung entfernen** deletes the stored session.
+Any browser signed into the Google account works for this, including a desktop. Billberries does **not** renew its session cookie on use, so a session lasts Billberries' fixed maximum (Flask's default is 31 days; their actual setting is unknown). The footer shows since when the session exists. The daily scan notices when Billberries rejects it and then sends one reminder e-mail (if e-mail is configured); the app asks for a new login as well. **Billberries-Anmeldung entfernen** deletes the stored session.
+
+## E-mail notifications
+
+The container loads the calendar **once a day** at `SCAN_TIME` (local time, Europe/Berlin) plus a new random offset of up to `SCAN_JITTER_MINUTES`. The next run is kept in `state.json`, so restarts don't shift it; a run missed while the container was down happens at startup. Each scan reports **new** reservations by other players marked *Suche Spielpartner* in one e-mail (each one only once; if sending fails, it is retried at the next scan). If the Billberries login has expired, the scan sends one reminder per expiry instead. *Tables & preferences* in the app shows the recipient and the last and next check, and offers **Check now** and **Send test e-mail**.
+
+Configure it in `.env` next to `docker-compose.yml` (never committed), then `docker-compose up -d`:
+
+| Variable | Default | Meaning |
+|---|---|---|
+| `NOTIFY_TO` | – | Recipient(s), comma-separated. E-mail is off unless `NOTIFY_TO`, `SMTP_HOST` and `SMTP_FROM` are set. |
+| `SMTP_HOST`, `SMTP_PORT` | –, `587` | SMTP server |
+| `SMTP_SECURITY` | `starttls` | `starttls`, `ssl` (implicit TLS, usually port 465) or `none` (e.g. a relay in your own LAN on port 25) |
+| `SMTP_USER`, `SMTP_PASSWORD` | – | Optional SMTP login |
+| `SMTP_FROM` | – | Sender address |
+| `NOTIFY_LANG` | `de` | E-mail language: `de` or `en` |
+| `APP_URL` | – | Link to the app in e-mails, e.g. `https://billberries.example.com/` |
+| `SCAN_TIME`, `SCAN_JITTER_MINUTES` | `08:00`, `180` | Daily scan time and maximum random delay |
 
 ## Limitations
 

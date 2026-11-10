@@ -164,6 +164,9 @@ dialog .card { margin: 0; box-shadow: none; }
       <label data-i18n="orderTitle"></label>
       <div class="order-row order-head"><span>#</span><span data-i18n="colTable"></span><span data-i18n="colSize"></span><span data-i18n="colCloth"></span><span></span><span></span></div>
       <div id="orderList"></div>
+      <label data-i18n="notifyTitle"></label>
+      <p class="muted" id="notifyInfo"></p>
+      <div class="row"><button id="scanNow" class="secondary" type="button" data-i18n="scanNow"></button><button id="testMail" class="secondary" type="button" data-i18n="testMail"></button></div>
     </details>
   </section>
 
@@ -200,6 +203,7 @@ dialog .card { margin: 0; box-shadow: none; }
       earlier: '30 minutes earlier', later: '30 minutes later', shorter: '30 minutes shorter', longer: '30 minutes longer',
       move: 'Move', timeHint: 'Tap a start time · duration in 30-minute steps', tableTitle: 'Table',
       dayMine: 'You have a reservation', dayOthers_one: 'One reservation by someone else', dayOthers_other: '{n} reservations by others', daySeeking: 'Someone is looking for a partner', legendMine: 'yours', legendOthers: 'others', legendSeeking: 'looking for a partner',
+      notifyTitle: 'E-mail notifications', notifyOn: 'New partner searches by other players are e-mailed to {to}.', notifyOff: 'E-mail is not set up on the server (see README).', notifyNext: 'Next check: {when}', notifyLast: 'Last check: {when} – {open} open, {new} new', scanNow: 'Check now', testMail: 'Send test e-mail', testMailSent: 'Test e-mail sent to {to}.', scanDone: 'Checked: {open} open partner searches, {new} new.', scanMailed: 'E-mail sent.', 'err.mail-not-configured': 'E-mail is not set up on the server.', 'err.mail-failed': 'Sending the e-mail failed: {reason}',
       dayTitle: 'All reservations · {day}',
       settingsSummary: 'Tables & preferences',
       settingsIntro: 'The free table with your preferred size is preselected, then your preferred cloth; ties are broken by your order. Stored on the server for all your devices.',
@@ -254,6 +258,7 @@ dialog .card { margin: 0; box-shadow: none; }
       earlier: '30 Minuten früher', later: '30 Minuten später', shorter: '30 Minuten kürzer', longer: '30 Minuten länger',
       move: 'Verschieben', timeHint: 'Startzeit antippen · Dauer in 30-Minuten-Schritten', tableTitle: 'Tisch',
       dayMine: 'Du hast eine Reservierung', dayOthers_one: 'Eine fremde Reservierung', dayOthers_other: '{n} fremde Reservierungen', daySeeking: 'Jemand sucht einen Spielpartner', legendMine: 'deine', legendOthers: 'andere', legendSeeking: 'sucht Spielpartner',
+      notifyTitle: 'E-Mail-Benachrichtigungen', notifyOn: 'Neue Spielpartner-Suchen anderer gehen per E-Mail an {to}.', notifyOff: 'E-Mail-Versand ist auf dem Server nicht eingerichtet (siehe README).', notifyNext: 'Nächste Prüfung: {when}', notifyLast: 'Letzte Prüfung: {when} – {open} offen, {new} neu', scanNow: 'Jetzt prüfen', testMail: 'Test-E-Mail senden', testMailSent: 'Test-E-Mail an {to} gesendet.', scanDone: 'Geprüft: {open} offene Spielpartner-Suchen, {new} neu.', scanMailed: 'E-Mail gesendet.', 'err.mail-not-configured': 'E-Mail-Versand ist auf dem Server nicht eingerichtet.', 'err.mail-failed': 'E-Mail-Versand fehlgeschlagen: {reason}',
       dayTitle: 'Alle Reservierungen · {day}',
       settingsSummary: 'Tische & Vorlieben',
       settingsIntro: 'Vorgewählt wird der freie Tisch in deiner bevorzugten Größe, dann mit deinem bevorzugten Tuch; bei Gleichstand entscheidet deine Reihenfolge. Gespeichert auf dem Server, gilt für alle Geräte.',
@@ -308,6 +313,7 @@ dialog .card { margin: 0; box-shadow: none; }
       earlier: '30 minutes plus tôt', later: '30 minutes plus tard', shorter: '30 minutes de moins', longer: '30 minutes de plus',
       move: 'Décaler', timeHint: 'Touche une heure de début · durée par tranches de 30 minutes', tableTitle: 'Table',
       dayMine: 'Tu as une réservation', dayOthers_one: 'Une réservation d’un autre joueur', dayOthers_other: '{n} réservations d’autres joueurs', daySeeking: 'Quelqu’un cherche un partenaire', legendMine: 'les tiennes', legendOthers: 'autres', legendSeeking: 'cherche un partenaire',
+      notifyTitle: 'Notifications par e-mail', notifyOn: 'Les nouvelles recherches de partenaire des autres sont envoyées à {to}.', notifyOff: 'L’envoi d’e-mails n’est pas configuré sur le serveur (voir README).', notifyNext: 'Prochaine vérification : {when}', notifyLast: 'Dernière vérification : {when} – {open} ouvertes, {new} nouvelles', scanNow: 'Vérifier maintenant', testMail: 'Envoyer un e-mail de test', testMailSent: 'E-mail de test envoyé à {to}.', scanDone: 'Vérifié : {open} recherches de partenaire ouvertes, {new} nouvelles.', scanMailed: 'E-mail envoyé.', 'err.mail-not-configured': 'L’envoi d’e-mails n’est pas configuré sur le serveur.', 'err.mail-failed': 'Échec de l’envoi de l’e-mail : {reason}',
       dayTitle: 'Toutes les réservations · {day}',
       settingsSummary: 'Tables et préférences',
       settingsIntro: 'La table libre de ta taille préférée est présélectionnée, puis celle de ton tapis préféré ; en cas d’égalité, ton ordre décide. Enregistré sur le serveur pour tous tes appareils.',
@@ -362,6 +368,7 @@ dialog .card { margin: 0; box-shadow: none; }
       earlier: '30 minutos antes', later: '30 minutos después', shorter: '30 minutos menos', longer: '30 minutos más',
       move: 'Mover', timeHint: 'Toca una hora de inicio · duración en pasos de 30 minutos', tableTitle: 'Mesa',
       dayMine: 'Tienes una reserva', dayOthers_one: 'Una reserva de otra persona', dayOthers_other: '{n} reservas de otros', daySeeking: 'Alguien busca compañero', legendMine: 'tuyas', legendOthers: 'otros', legendSeeking: 'busca compañero',
+      notifyTitle: 'Avisos por correo', notifyOn: 'Las nuevas búsquedas de compañero de otros se envían a {to}.', notifyOff: 'El envío de correo no está configurado en el servidor (ver README).', notifyNext: 'Próxima comprobación: {when}', notifyLast: 'Última comprobación: {when} – {open} abiertas, {new} nuevas', scanNow: 'Comprobar ahora', testMail: 'Enviar correo de prueba', testMailSent: 'Correo de prueba enviado a {to}.', scanDone: 'Comprobado: {open} búsquedas de compañero abiertas, {new} nuevas.', scanMailed: 'Correo enviado.', 'err.mail-not-configured': 'El envío de correo no está configurado en el servidor.', 'err.mail-failed': 'Falló el envío del correo: {reason}',
       dayTitle: 'Todas las reservas · {day}',
       settingsSummary: 'Mesas y preferencias',
       settingsIntro: 'Se preselecciona la mesa libre de tu tamaño preferido y luego de tu paño preferido; en caso de empate decide tu orden. Guardado en el servidor para todos tus dispositivos.',
@@ -416,6 +423,7 @@ dialog .card { margin: 0; box-shadow: none; }
       earlier: '30 minuti prima', later: '30 minuti dopo', shorter: '30 minuti in meno', longer: '30 minuti in più',
       move: 'Sposta', timeHint: 'Tocca un’ora di inizio · durata in passi di 30 minuti', tableTitle: 'Tavolo',
       dayMine: 'Hai una prenotazione', dayOthers_one: 'Una prenotazione di altri', dayOthers_other: '{n} prenotazioni di altri', daySeeking: 'Qualcuno cerca un compagno', legendMine: 'tue', legendOthers: 'altri', legendSeeking: 'cerca un compagno',
+      notifyTitle: 'Notifiche e-mail', notifyOn: 'Le nuove ricerche di compagno degli altri vengono inviate a {to}.', notifyOff: 'L’invio di e-mail non è configurato sul server (vedi README).', notifyNext: 'Prossimo controllo: {when}', notifyLast: 'Ultimo controllo: {when} – {open} aperte, {new} nuove', scanNow: 'Controlla ora', testMail: 'Invia e-mail di prova', testMailSent: 'E-mail di prova inviata a {to}.', scanDone: 'Controllato: {open} ricerche di compagno aperte, {new} nuove.', scanMailed: 'E-mail inviata.', 'err.mail-not-configured': 'L’invio di e-mail non è configurato sul server.', 'err.mail-failed': 'Invio dell’e-mail non riuscito: {reason}',
       dayTitle: 'Tutte le prenotazioni · {day}',
       settingsSummary: 'Tavoli e preferenze',
       settingsIntro: 'Viene preselezionato il tavolo libero della misura preferita, poi del panno preferito; a parità decide il tuo ordine. Salvato sul server per tutti i tuoi dispositivi.',
@@ -470,6 +478,7 @@ dialog .card { margin: 0; box-shadow: none; }
       earlier: '30 minutos mais cedo', later: '30 minutos mais tarde', shorter: '30 minutos a menos', longer: '30 minutos a mais',
       move: 'Mover', timeHint: 'Toque num horário de início · duração em passos de 30 minutos', tableTitle: 'Mesa',
       dayMine: 'Você tem uma reserva', dayOthers_one: 'Uma reserva de outra pessoa', dayOthers_other: '{n} reservas de outros', daySeeking: 'Alguém procura parceiro', legendMine: 'suas', legendOthers: 'outros', legendSeeking: 'procura parceiro',
+      notifyTitle: 'Notificações por e-mail', notifyOn: 'Novas procuras de parceiro de outros são enviadas para {to}.', notifyOff: 'O envio de e-mail não está configurado no servidor (ver README).', notifyNext: 'Próxima verificação: {when}', notifyLast: 'Última verificação: {when} – {open} abertas, {new} novas', scanNow: 'Verificar agora', testMail: 'Enviar e-mail de teste', testMailSent: 'E-mail de teste enviado para {to}.', scanDone: 'Verificado: {open} procuras de parceiro abertas, {new} novas.', scanMailed: 'E-mail enviado.', 'err.mail-not-configured': 'O envio de e-mail não está configurado no servidor.', 'err.mail-failed': 'Falha ao enviar o e-mail: {reason}',
       dayTitle: 'Todas as reservas · {day}',
       settingsSummary: 'Mesas e preferências',
       settingsIntro: 'É pré-selecionada a mesa livre no seu tamanho preferido, depois com o seu pano preferido; em caso de empate, decide a sua ordem. Salvo no servidor para todos os seus dispositivos.',
@@ -524,6 +533,7 @@ dialog .card { margin: 0; box-shadow: none; }
       earlier: '30 minuten eerder', later: '30 minuten later', shorter: '30 minuten korter', longer: '30 minuten langer',
       move: 'Verschuiven', timeHint: 'Tik op een begintijd · duur in stappen van 30 minuten', tableTitle: 'Tafel',
       dayMine: 'Je hebt een reservering', dayOthers_one: 'Eén reservering van iemand anders', dayOthers_other: '{n} reserveringen van anderen', daySeeking: 'Iemand zoekt een partner', legendMine: 'jouw', legendOthers: 'anderen', legendSeeking: 'zoekt een partner',
+      notifyTitle: 'E-mailmeldingen', notifyOn: 'Nieuwe partnerzoekopdrachten van anderen worden gemaild naar {to}.', notifyOff: 'E-mail is niet ingesteld op de server (zie README).', notifyNext: 'Volgende controle: {when}', notifyLast: 'Laatste controle: {when} – {open} open, {new} nieuw', scanNow: 'Nu controleren', testMail: 'Test-e-mail sturen', testMailSent: 'Test-e-mail verstuurd naar {to}.', scanDone: 'Gecontroleerd: {open} open partnerzoekopdrachten, {new} nieuw.', scanMailed: 'E-mail verstuurd.', 'err.mail-not-configured': 'E-mail is niet ingesteld op de server.', 'err.mail-failed': 'Versturen van de e-mail mislukt: {reason}',
       dayTitle: 'Alle reserveringen · {day}',
       settingsSummary: 'Tafels & voorkeuren',
       settingsIntro: 'De vrije tafel in je voorkeursmaat wordt voorgeselecteerd, daarna met je voorkeurslaken; bij gelijkstand beslist jouw volgorde. Opgeslagen op de server voor al je apparaten.',
@@ -865,6 +875,18 @@ dialog .card { margin: 0; box-shadow: none; }
   }
   function changed() { state.table = null; saveSettings(); renderSettings(); render(); }
 
+  function renderNotify() {
+    const n = state.status?.notify;
+    if (!n) return;
+    const when = epoch => new Intl.DateTimeFormat(tag, { timeZone: 'Europe/Berlin', weekday: 'short', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }).format(new Date(epoch * 1000));
+    const lines = [n.configured ? t('notifyOn', { to: n.to.join(', ') }) : t('notifyOff')];
+    if (n.nextScanAt) lines.push(t('notifyNext', { when: when(n.nextScanAt) }));
+    if (n.lastScan?.at) lines.push(n.lastScan.loggedIn === false ? `${t('notifyLast', { when: when(n.lastScan.at), open: '–', new: '–' })} (${t('errLoginNeeded')})`
+      : t('notifyLast', { when: when(n.lastScan.at), open: n.lastScan.open, new: n.lastScan.new }));
+    $('notifyInfo').replaceChildren(...lines.flatMap((line, i) => i ? [el('br'), line] : [line]));
+    $('testMail').disabled = !n.configured;
+  }
+  async function refreshStatus() { try { state.status = await getJSON('api/status'); renderSession(); renderNotify(); } catch {} }
   function renderSession() {
     const s = state.status;
     if (!s) return;
@@ -984,7 +1006,7 @@ dialog .card { margin: 0; box-shadow: none; }
       }
       if (!state.me) { try { state.me = (await getJSON('api/me')).player; } catch (e) { if (!(e instanceof LoginNeeded)) console.warn(e); } }
       render();
-      getJSON('api/status').then(s => { state.status = s; renderSession(); }).catch(() => {});
+      refreshStatus();
     } catch (e) { error(e); } finally { $('refresh').disabled = false; render(); }
   }
   function showLogin(on) { $('bbLogin').hidden = !on; if (on) $('subtitle').textContent = t('errLoginNeeded'); }
@@ -1016,7 +1038,21 @@ dialog .card { margin: 0; box-shadow: none; }
     if (choice) localStorage.setItem(LOCALE_KEY, choice); else localStorage.removeItem(LOCALE_KEY);
     setLocale(choice); applyStatic(); notice('');
     if (state.settings) renderSettings();
-    render(); renderSession();
+    render(); renderSession(); renderNotify();
+  };
+  $('scanNow').onclick = async () => {
+    const button = $('scanNow'); button.disabled = true; notice('');
+    try {
+      const r = await postJSON('api/admin/scan', {});
+      if (!r.loggedIn) { showLogin(true); notice(t('errLoginNeeded')); }
+      else notice([t('scanDone', { open: r.open, new: r.new }), r.mailed && t('scanMailed'), r.error && t('err.' + r.error, { reason: '' })].filter(Boolean).join(' '), !r.error);
+      await refreshStatus();
+    } catch (e) { error(e); } finally { button.disabled = false; }
+  };
+  $('testMail').onclick = async () => {
+    const button = $('testMail'); button.disabled = true; notice('');
+    try { const r = await postJSON('api/admin/test-mail', {}); notice(t('testMailSent', { to: r.to.join(', ') }), true); }
+    catch (e) { error(e); } finally { button.disabled = false; }
   };
   $('refresh').onclick = () => { notice(''); load(); };
   $('book').onclick = book;
