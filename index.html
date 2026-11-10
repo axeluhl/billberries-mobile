@@ -82,7 +82,11 @@ dialog .card { margin: 0; box-shadow: none; }
 .foot > div { max-width: 648px; margin: auto; }
 .original { font-size: 13px; text-align: center; margin: 15px 0; }
 .original a { color: var(--green); }
-.lang { width: auto; max-width: 6.75rem; min-height: 44px; padding: 6px 8px; border-radius: 12px; border: 1px solid #d5dfdd; background: #fff; color: #294253; }
+.lang { position: relative; display: inline-flex; align-items: center; gap: 5px; min-height: 44px; padding: 6px 10px; border-radius: 12px; border: 1px solid #d5dfdd; background: #fff; color: #294253; font-weight: 650; white-space: nowrap; }
+.lang .flag { font-size: 20px; line-height: 1; }
+.lang .chev { font-size: 11px; color: #637680; }
+.lang select { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; font-size: 16px; }
+.lang:focus-within { outline: 3px solid #d69a16; outline-offset: 2px; }
 #bbLogin ol { padding-left: 20px; }
 #bbLogin li { margin: 12px 0; }
 </style>
@@ -92,7 +96,7 @@ dialog .card { margin: 0; box-shadow: none; }
   <header>
     <div><strong>Billberries <span style="color:var(--green)">Mobile</span></strong><small data-i18n="appTagline"></small></div>
     <div class="row">
-      <select id="language" class="lang" data-i18n-aria="language"></select>
+      <label class="lang"><span class="flag" id="langFlag" aria-hidden="true"></span><span id="langCode" aria-hidden="true"></span><span class="chev" aria-hidden="true">▾</span><select id="language" data-i18n-aria="language"></select></label>
       <button id="refresh" class="icon" type="button" data-i18n-aria="refresh" data-i18n-title="refresh">↻</button>
     </div>
   </header>
@@ -173,7 +177,7 @@ dialog .card { margin: 0; box-shadow: none; }
   const LANGUAGES = { en: 'English', de: 'Deutsch', fr: 'Français', es: 'Español', it: 'Italiano', pt: 'Português', nl: 'Nederlands' };
   const I18N = {
     en: {
-      appTagline: 'BSC Karlsruhe · Table reservations', refresh: 'Refresh', close: 'Close', language: 'Language',
+      appTagline: 'BSC Karlsruhe · Table reservations', refresh: 'Refresh', close: 'Close', language: 'Language', languageAuto: 'Automatic ({language})',
       heading: 'When do you want to play?', loading: 'Loading calendar …',
       loginTitle: 'Log in to Billberries', loginIntro: 'The server needs a Billberries login to book for you. This is rarely necessary.',
       loginOpen: 'Open Google login',
@@ -226,7 +230,7 @@ dialog .card { margin: 0; box-shadow: none; }
       'bb.??? - gerne dazubuchen': '??? – feel free to join', 'bb.Mannschaftsspiel': 'Team match', 'bb.Guest': 'Guest',
     },
     de: {
-      appTagline: 'BSC Karlsruhe · Tischreservierung', refresh: 'Aktualisieren', close: 'Schließen', language: 'Sprache',
+      appTagline: 'BSC Karlsruhe · Tischreservierung', refresh: 'Aktualisieren', close: 'Schließen', language: 'Sprache', languageAuto: 'Automatisch ({language})',
       heading: 'Wann möchtest du spielen?', loading: 'Kalender wird geladen …',
       loginTitle: 'Bei Billberries anmelden', loginIntro: 'Der Server braucht eine Billberries-Anmeldung, um für dich zu buchen. Das ist nur selten nötig.',
       loginOpen: 'Google-Anmeldung öffnen',
@@ -279,7 +283,7 @@ dialog .card { margin: 0; box-shadow: none; }
       'bb.??? - gerne dazubuchen': '??? – gerne dazubuchen', 'bb.Mannschaftsspiel': 'Mannschaftsspiel', 'bb.Guest': 'Gast',
     },
     fr: {
-      appTagline: 'BSC Karlsruhe · Réservation de tables', refresh: 'Actualiser', close: 'Fermer', language: 'Langue',
+      appTagline: 'BSC Karlsruhe · Réservation de tables', refresh: 'Actualiser', close: 'Fermer', language: 'Langue', languageAuto: 'Automatique ({language})',
       heading: 'Quand veux-tu jouer ?', loading: 'Chargement du calendrier …',
       loginTitle: 'Connexion à Billberries', loginIntro: 'Le serveur a besoin d’une connexion Billberries pour réserver pour toi. C’est rarement nécessaire.',
       loginOpen: 'Ouvrir la connexion Google',
@@ -332,7 +336,7 @@ dialog .card { margin: 0; box-shadow: none; }
       'bb.??? - gerne dazubuchen': '??? – rejoins-nous', 'bb.Mannschaftsspiel': 'Match d’équipe', 'bb.Guest': 'Invité',
     },
     es: {
-      appTagline: 'BSC Karlsruhe · Reserva de mesas', refresh: 'Actualizar', close: 'Cerrar', language: 'Idioma',
+      appTagline: 'BSC Karlsruhe · Reserva de mesas', refresh: 'Actualizar', close: 'Cerrar', language: 'Idioma', languageAuto: 'Automático ({language})',
       heading: '¿Cuándo quieres jugar?', loading: 'Cargando calendario …',
       loginTitle: 'Iniciar sesión en Billberries', loginIntro: 'El servidor necesita una sesión de Billberries para reservar por ti. Rara vez es necesario.',
       loginOpen: 'Abrir inicio de sesión de Google',
@@ -385,7 +389,7 @@ dialog .card { margin: 0; box-shadow: none; }
       'bb.??? - gerne dazubuchen': '??? – únete', 'bb.Mannschaftsspiel': 'Partido por equipos', 'bb.Guest': 'Invitado',
     },
     it: {
-      appTagline: 'BSC Karlsruhe · Prenotazione tavoli', refresh: 'Aggiorna', close: 'Chiudi', language: 'Lingua',
+      appTagline: 'BSC Karlsruhe · Prenotazione tavoli', refresh: 'Aggiorna', close: 'Chiudi', language: 'Lingua', languageAuto: 'Automatica ({language})',
       heading: 'Quando vuoi giocare?', loading: 'Caricamento calendario …',
       loginTitle: 'Accedi a Billberries', loginIntro: 'Il server ha bisogno di un accesso Billberries per prenotare per te. Serve raramente.',
       loginOpen: 'Apri accesso Google',
@@ -438,7 +442,7 @@ dialog .card { margin: 0; box-shadow: none; }
       'bb.??? - gerne dazubuchen': '??? – unisciti', 'bb.Mannschaftsspiel': 'Partita a squadre', 'bb.Guest': 'Ospite',
     },
     pt: {
-      appTagline: 'BSC Karlsruhe · Reserva de mesas', refresh: 'Atualizar', close: 'Fechar', language: 'Idioma',
+      appTagline: 'BSC Karlsruhe · Reserva de mesas', refresh: 'Atualizar', close: 'Fechar', language: 'Idioma', languageAuto: 'Automático ({language})',
       heading: 'Quando você quer jogar?', loading: 'Carregando calendário …',
       loginTitle: 'Entrar no Billberries', loginIntro: 'O servidor precisa de um login no Billberries para reservar por você. Isso raramente é necessário.',
       loginOpen: 'Abrir login do Google',
@@ -491,7 +495,7 @@ dialog .card { margin: 0; box-shadow: none; }
       'bb.??? - gerne dazubuchen': '??? – junte-se', 'bb.Mannschaftsspiel': 'Jogo de equipas', 'bb.Guest': 'Convidado',
     },
     nl: {
-      appTagline: 'BSC Karlsruhe · Tafelreservering', refresh: 'Vernieuwen', close: 'Sluiten', language: 'Taal',
+      appTagline: 'BSC Karlsruhe · Tafelreservering', refresh: 'Vernieuwen', close: 'Sluiten', language: 'Taal', languageAuto: 'Automatisch ({language})',
       heading: 'Wanneer wil je spelen?', loading: 'Kalender laden …',
       loginTitle: 'Inloggen bij Billberries', loginIntro: 'De server heeft een Billberries-login nodig om voor je te reserveren. Dat is maar zelden nodig.',
       loginOpen: 'Google-login openen',
@@ -561,6 +565,23 @@ dialog .card { margin: 0; box-shadow: none; }
     const text = I18N[lang][key] ?? I18N.en[key] ?? key;
     return text.replace(/\{(\w+)\}/g, (m, name) => params[name] ?? m);
   }
+  // Flags show regions, not languages: use the browser's region for its language (pt-BR -> BR), else a default.
+  const DEFAULT_REGION = { en: 'GB', de: 'DE', fr: 'FR', es: 'ES', it: 'IT', pt: 'PT', nl: 'NL' };
+  const FLAGS_RENDER = (() => {
+    // Some platforms (notably Windows) draw flag emojis as two letters; detect color pixels instead.
+    try {
+      const c = document.createElement('canvas'); c.width = c.height = 20;
+      const x = c.getContext('2d'); x.textBaseline = 'top'; x.font = '16px sans-serif'; x.fillText('\u{1F1E9}\u{1F1EA}', 0, 0);
+      const d = x.getImageData(0, 0, 20, 20).data;
+      for (let i = 0; i < d.length; i += 4) if (d[i + 3] && (Math.abs(d[i] - d[i + 1]) > 20 || Math.abs(d[i + 1] - d[i + 2]) > 20)) return true;
+    } catch {}
+    return false;
+  })();
+  function flagFor(code) {
+    if (!FLAGS_RENDER) return '';
+    const region = (String(browserTag(code)).match(/^[a-z]{2,3}[-_]([A-Za-z]{2})\b/)?.[1] || DEFAULT_REGION[code] || '').toUpperCase();
+    return region.length === 2 ? String.fromCodePoint(...[...region].map(ch => 0x1F1E6 + ch.charCodeAt(0) - 65)) : '';
+  }
   const bbText = line => I18N[lang]['bb.' + line] ?? line; // labels Billberries sends in German
   function applyStatic() {
     document.querySelectorAll('[data-i18n]').forEach(n => { n.textContent = t(n.dataset.i18n); });
@@ -569,10 +590,12 @@ dialog .card { margin: 0; box-shadow: none; }
     document.querySelectorAll('[data-i18n-title]').forEach(n => { n.title = t(n.dataset.i18nTitle); });
     const select = document.getElementById('language');
     const saved = localStorage.getItem(LOCALE_KEY) || '';
-    // Compact labels keep the header on one line; the select's aria-label names it.
-    select.replaceChildren(new Option(`Auto · ${browserLang().toUpperCase()}`, ''),
-      ...Object.entries(LANGUAGES).map(([code, name]) => new Option(`${code.toUpperCase()} · ${name}`, code)));
+    select.replaceChildren(new Option(`🌐 ${t('languageAuto', { language: LANGUAGES[browserLang()] })}`, ''),
+      ...Object.entries(LANGUAGES).map(([code, name]) => new Option(`${flagFor(code)} ${name}`.trim(), code)));
     select.value = saved;
+    // Closed state: just flag and language code; the open native list shows full names.
+    document.getElementById('langFlag').textContent = flagFor(lang) || '🌐';
+    document.getElementById('langCode').textContent = lang.toUpperCase();
   }
 
   // ---------- helpers ----------
