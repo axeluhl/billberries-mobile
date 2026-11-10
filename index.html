@@ -595,7 +595,7 @@ dialog .card { margin: 0; box-shadow: none; }
   const shown = lines => lines.filter(l => l !== 'None').map(bbText).join(' · ');
 
   const state = {
-    days: new Map(), date: dateKey(Date.now()), start: null, len: 2, table: null,
+    days: new Map(), date: dateKey(Date.now()), start: null, len: 6, table: null, // 6 × 30 min = 3 h
     busy: false, seq: 0, me: null, settings: null, status: null,
   };
 
