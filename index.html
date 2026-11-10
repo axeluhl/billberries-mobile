@@ -76,7 +76,7 @@ h2 { margin: 0 0 8px; font-size: 20px; }
 .segmented button { flex: 1; min-height: 50px; border: 1px solid #cbd9d5; border-radius: 12px; background: #fff; color: #294253; }
 .segmented button[aria-pressed="true"] { background: #e8f5ee; border-color: var(--green); color: var(--green); font-weight: 700; }
 label { display: block; font-weight: 650; font-size: 14px; margin: 12px 0 4px; }
-select, input[type=text] { width: 100%; min-height: 44px; padding: 8px 10px; border: 1px solid #cddbd6; border-radius: 11px; background: #fff; }
+select, input[type=text], input[type=number] { width: 100%; min-height: 44px; padding: 8px 10px; border: 1px solid #cddbd6; border-radius: 11px; background: #fff; }
 .order-row { display: grid; grid-template-columns: 26px 64px 1fr 1fr 44px 44px; gap: 6px; align-items: center; margin: 6px 0; }
 .order-row input { min-width: 0; }
 .order-head { font-size: 12px; color: #5d737d; }
@@ -164,6 +164,9 @@ dialog .card { margin: 0; box-shadow: none; }
       <label data-i18n="orderTitle"></label>
       <div class="order-row order-head"><span>#</span><span data-i18n="colTable"></span><span data-i18n="colSize"></span><span data-i18n="colCloth"></span><span></span><span></span></div>
       <div id="orderList"></div>
+      <label for="calendarReminder" data-i18n="calendarReminderLabel"></label>
+      <input id="calendarReminder" type="number" min="0" max="10080" step="1" inputmode="numeric" aria-describedby="calendarReminderHint">
+      <p class="muted" id="calendarReminderHint" data-i18n="calendarReminderHint"></p>
       <label data-i18n="notifyTitle"></label>
       <p class="muted" id="notifyInfo"></p>
       <div class="row"><button id="scanNow" class="secondary" type="button" data-i18n="scanNow"></button><button id="testMail" class="secondary" type="button" data-i18n="testMail"></button></div>
@@ -206,6 +209,13 @@ dialog .card { margin: 0; box-shadow: none; }
       notifyTitle: 'E-mail notifications', notifyOn: 'New partner searches by other players are e-mailed to {to}.', notifyOff: 'E-mail is not set up on the server (see README).', notifyNext: 'Next check: {when}', notifyLast: 'Last check: {when} – {open} open, {new} new', scanNow: 'Check now', testMail: 'Send test e-mail', testMailSent: 'Test e-mail sent to {to}.', scanDone: 'Checked: {open} open partner searches, {new} new.', scanMailed: 'E-mail sent.', 'err.mail-not-configured': 'E-mail is not set up on the server.', 'err.mail-failed': 'Sending the e-mail failed: {reason}',
       dayTitle: 'All reservations · {day}',
       settingsSummary: 'Tables & preferences',
+      calendarReminderLabel: 'Calendar reminder: minutes before the reservation',
+      calendarReminderHint: 'New bookings are e-mailed with an .ics calendar file. Default: 60 minutes; 0 means at the start. Your calendar app must import the file and allow reminders. Changes apply to future booking e-mails only.',
+      calendarRecipient: 'Reservation calendar files are sent to {to}.',
+      calendarMailSent: 'E-mail with calendar file sent.',
+      calendarMailFailed: 'The booking exists, but its calendar e-mail could not be sent. Do not book again.',
+      calendarMailOff: 'No calendar e-mail sent: configure SMTP and a recipient on the server.',
+      calendarMailUnconfirmed: 'No calendar e-mail sent because the server could not verify the reservation. Check the original calendar; do not blindly book again.',
       settingsIntro: 'The free table with your preferred size is preselected, then your preferred cloth; ties are broken by your order. Stored on the server for all your devices.',
       prefSize: 'Preferred size', prefCloth: 'Preferred cloth', orderTitle: 'Tables and order for ties',
       colTable: 'Table', colSize: 'Size', colCloth: 'Cloth', any: 'any', unknown: 'unknown',
@@ -261,6 +271,13 @@ dialog .card { margin: 0; box-shadow: none; }
       notifyTitle: 'E-Mail-Benachrichtigungen', notifyOn: 'Neue Spielpartner-Suchen anderer gehen per E-Mail an {to}.', notifyOff: 'E-Mail-Versand ist auf dem Server nicht eingerichtet (siehe README).', notifyNext: 'Nächste Prüfung: {when}', notifyLast: 'Letzte Prüfung: {when} – {open} offen, {new} neu', scanNow: 'Jetzt prüfen', testMail: 'Test-E-Mail senden', testMailSent: 'Test-E-Mail an {to} gesendet.', scanDone: 'Geprüft: {open} offene Spielpartner-Suchen, {new} neu.', scanMailed: 'E-Mail gesendet.', 'err.mail-not-configured': 'E-Mail-Versand ist auf dem Server nicht eingerichtet.', 'err.mail-failed': 'E-Mail-Versand fehlgeschlagen: {reason}',
       dayTitle: 'Alle Reservierungen · {day}',
       settingsSummary: 'Tische & Vorlieben',
+      calendarReminderLabel: 'Kalendererinnerung: Minuten vor der Reservierung',
+      calendarReminderHint: 'Neue Buchungen kommen per E-Mail mit einer .ics-Kalenderdatei. Standard: 60 Minuten; 0 heißt zum Beginn. Deine Kalender-App muss die Datei importieren und Erinnerungen zulassen. Änderungen gelten nur für künftige Buchungs-E-Mails.',
+      calendarRecipient: 'Kalenderdateien zu deinen Reservierungen gehen an {to}.',
+      calendarMailSent: 'E-Mail mit Kalenderdatei gesendet.',
+      calendarMailFailed: 'Die Buchung besteht, aber die Kalender-E-Mail konnte nicht gesendet werden. Nicht erneut buchen.',
+      calendarMailOff: 'Keine Kalender-E-Mail gesendet: SMTP und Empfänger auf dem Server konfigurieren.',
+      calendarMailUnconfirmed: 'Keine Kalender-E-Mail gesendet, weil der Server die Reservierung nicht bestätigen konnte. Im Originalkalender prüfen; nicht blind erneut buchen.',
       settingsIntro: 'Vorgewählt wird der freie Tisch in deiner bevorzugten Größe, dann mit deinem bevorzugten Tuch; bei Gleichstand entscheidet deine Reihenfolge. Gespeichert auf dem Server, gilt für alle Geräte.',
       prefSize: 'Bevorzugte Größe', prefCloth: 'Bevorzugtes Tuch', orderTitle: 'Tische und Reihenfolge bei Gleichstand',
       colTable: 'Tisch', colSize: 'Größe', colCloth: 'Tuch', any: 'egal', unknown: 'unbekannt',
@@ -316,6 +333,13 @@ dialog .card { margin: 0; box-shadow: none; }
       notifyTitle: 'Notifications par e-mail', notifyOn: 'Les nouvelles recherches de partenaire des autres sont envoyées à {to}.', notifyOff: 'L’envoi d’e-mails n’est pas configuré sur le serveur (voir README).', notifyNext: 'Prochaine vérification : {when}', notifyLast: 'Dernière vérification : {when} – {open} ouvertes, {new} nouvelles', scanNow: 'Vérifier maintenant', testMail: 'Envoyer un e-mail de test', testMailSent: 'E-mail de test envoyé à {to}.', scanDone: 'Vérifié : {open} recherches de partenaire ouvertes, {new} nouvelles.', scanMailed: 'E-mail envoyé.', 'err.mail-not-configured': 'L’envoi d’e-mails n’est pas configuré sur le serveur.', 'err.mail-failed': 'Échec de l’envoi de l’e-mail : {reason}',
       dayTitle: 'Toutes les réservations · {day}',
       settingsSummary: 'Tables et préférences',
+      calendarReminderLabel: 'Rappel calendrier : minutes avant la réservation',
+      calendarReminderHint: 'Les nouvelles réservations sont envoyées par e-mail avec un fichier calendrier .ics. Par défaut : 60 minutes ; 0 signifie au début. Ton calendrier doit importer le fichier et autoriser les rappels. Les changements ne concernent que les prochains e-mails de réservation.',
+      calendarRecipient: 'Les fichiers calendrier des réservations sont envoyés à {to}.',
+      calendarMailSent: 'E-mail avec fichier calendrier envoyé.',
+      calendarMailFailed: 'La réservation existe, mais son e-mail calendrier n’a pas pu être envoyé. Ne réserve pas à nouveau.',
+      calendarMailOff: 'Aucun e-mail calendrier envoyé : configure SMTP et un destinataire sur le serveur.',
+      calendarMailUnconfirmed: 'Aucun e-mail calendrier envoyé car le serveur n’a pas pu vérifier la réservation. Vérifie le calendrier original avant toute nouvelle tentative.',
       settingsIntro: 'La table libre de ta taille préférée est présélectionnée, puis celle de ton tapis préféré ; en cas d’égalité, ton ordre décide. Enregistré sur le serveur pour tous tes appareils.',
       prefSize: 'Taille préférée', prefCloth: 'Tapis préféré', orderTitle: 'Tables et ordre en cas d’égalité',
       colTable: 'Table', colSize: 'Taille', colCloth: 'Tapis', any: 'indifférent', unknown: 'inconnu',
@@ -371,6 +395,13 @@ dialog .card { margin: 0; box-shadow: none; }
       notifyTitle: 'Avisos por correo', notifyOn: 'Las nuevas búsquedas de compañero de otros se envían a {to}.', notifyOff: 'El envío de correo no está configurado en el servidor (ver README).', notifyNext: 'Próxima comprobación: {when}', notifyLast: 'Última comprobación: {when} – {open} abiertas, {new} nuevas', scanNow: 'Comprobar ahora', testMail: 'Enviar correo de prueba', testMailSent: 'Correo de prueba enviado a {to}.', scanDone: 'Comprobado: {open} búsquedas de compañero abiertas, {new} nuevas.', scanMailed: 'Correo enviado.', 'err.mail-not-configured': 'El envío de correo no está configurado en el servidor.', 'err.mail-failed': 'Falló el envío del correo: {reason}',
       dayTitle: 'Todas las reservas · {day}',
       settingsSummary: 'Mesas y preferencias',
+      calendarReminderLabel: 'Recordatorio del calendario: minutos antes de la reserva',
+      calendarReminderHint: 'Las nuevas reservas se envían por correo con un archivo de calendario .ics. Predeterminado: 60 minutos; 0 significa al inicio. Tu calendario debe importar el archivo y permitir recordatorios. Los cambios solo afectan a futuros correos de reserva.',
+      calendarRecipient: 'Los archivos de calendario de las reservas se envían a {to}.',
+      calendarMailSent: 'Correo con archivo de calendario enviado.',
+      calendarMailFailed: 'La reserva existe, pero no se pudo enviar su correo de calendario. No reserves de nuevo.',
+      calendarMailOff: 'No se envió correo de calendario: configura SMTP y un destinatario en el servidor.',
+      calendarMailUnconfirmed: 'No se envió correo de calendario porque el servidor no pudo verificar la reserva. Revisa el calendario original antes de volver a reservar.',
       settingsIntro: 'Se preselecciona la mesa libre de tu tamaño preferido y luego de tu paño preferido; en caso de empate decide tu orden. Guardado en el servidor para todos tus dispositivos.',
       prefSize: 'Tamaño preferido', prefCloth: 'Paño preferido', orderTitle: 'Mesas y orden en caso de empate',
       colTable: 'Mesa', colSize: 'Tamaño', colCloth: 'Paño', any: 'cualquiera', unknown: 'desconocido',
@@ -426,6 +457,13 @@ dialog .card { margin: 0; box-shadow: none; }
       notifyTitle: 'Notifiche e-mail', notifyOn: 'Le nuove ricerche di compagno degli altri vengono inviate a {to}.', notifyOff: 'L’invio di e-mail non è configurato sul server (vedi README).', notifyNext: 'Prossimo controllo: {when}', notifyLast: 'Ultimo controllo: {when} – {open} aperte, {new} nuove', scanNow: 'Controlla ora', testMail: 'Invia e-mail di prova', testMailSent: 'E-mail di prova inviata a {to}.', scanDone: 'Controllato: {open} ricerche di compagno aperte, {new} nuove.', scanMailed: 'E-mail inviata.', 'err.mail-not-configured': 'L’invio di e-mail non è configurato sul server.', 'err.mail-failed': 'Invio dell’e-mail non riuscito: {reason}',
       dayTitle: 'Tutte le prenotazioni · {day}',
       settingsSummary: 'Tavoli e preferenze',
+      calendarReminderLabel: 'Promemoria calendario: minuti prima della prenotazione',
+      calendarReminderHint: 'Le nuove prenotazioni vengono inviate via e-mail con un file calendario .ics. Predefinito: 60 minuti; 0 significa all’inizio. Il calendario deve importare il file e consentire i promemoria. Le modifiche valgono solo per le prossime e-mail di prenotazione.',
+      calendarRecipient: 'I file calendario delle prenotazioni vengono inviati a {to}.',
+      calendarMailSent: 'E-mail con file calendario inviata.',
+      calendarMailFailed: 'La prenotazione esiste, ma non è stato possibile inviare l’e-mail calendario. Non prenotare di nuovo.',
+      calendarMailOff: 'Nessuna e-mail calendario inviata: configura SMTP e un destinatario sul server.',
+      calendarMailUnconfirmed: 'Nessuna e-mail calendario inviata perché il server non ha potuto verificare la prenotazione. Controlla il calendario originale prima di riprovare.',
       settingsIntro: 'Viene preselezionato il tavolo libero della misura preferita, poi del panno preferito; a parità decide il tuo ordine. Salvato sul server per tutti i tuoi dispositivi.',
       prefSize: 'Misura preferita', prefCloth: 'Panno preferito', orderTitle: 'Tavoli e ordine a parità',
       colTable: 'Tavolo', colSize: 'Misura', colCloth: 'Panno', any: 'qualsiasi', unknown: 'sconosciuto',
@@ -481,6 +519,13 @@ dialog .card { margin: 0; box-shadow: none; }
       notifyTitle: 'Notificações por e-mail', notifyOn: 'Novas procuras de parceiro de outros são enviadas para {to}.', notifyOff: 'O envio de e-mail não está configurado no servidor (ver README).', notifyNext: 'Próxima verificação: {when}', notifyLast: 'Última verificação: {when} – {open} abertas, {new} novas', scanNow: 'Verificar agora', testMail: 'Enviar e-mail de teste', testMailSent: 'E-mail de teste enviado para {to}.', scanDone: 'Verificado: {open} procuras de parceiro abertas, {new} novas.', scanMailed: 'E-mail enviado.', 'err.mail-not-configured': 'O envio de e-mail não está configurado no servidor.', 'err.mail-failed': 'Falha ao enviar o e-mail: {reason}',
       dayTitle: 'Todas as reservas · {day}',
       settingsSummary: 'Mesas e preferências',
+      calendarReminderLabel: 'Lembrete do calendário: minutos antes da reserva',
+      calendarReminderHint: 'Novas reservas são enviadas por e-mail com um arquivo de calendário .ics. Padrão: 60 minutos; 0 significa no início. O calendário deve importar o arquivo e permitir lembretes. As alterações só afetam futuros e-mails de reserva.',
+      calendarRecipient: 'Os arquivos de calendário das reservas são enviados para {to}.',
+      calendarMailSent: 'E-mail com arquivo de calendário enviado.',
+      calendarMailFailed: 'A reserva existe, mas o e-mail de calendário não pôde ser enviado. Não reserve de novo.',
+      calendarMailOff: 'Nenhum e-mail de calendário enviado: configure SMTP e um destinatário no servidor.',
+      calendarMailUnconfirmed: 'Nenhum e-mail de calendário enviado porque o servidor não conseguiu verificar a reserva. Confira o calendário original antes de tentar de novo.',
       settingsIntro: 'É pré-selecionada a mesa livre no seu tamanho preferido, depois com o seu pano preferido; em caso de empate, decide a sua ordem. Salvo no servidor para todos os seus dispositivos.',
       prefSize: 'Tamanho preferido', prefCloth: 'Pano preferido', orderTitle: 'Mesas e ordem em caso de empate',
       colTable: 'Mesa', colSize: 'Tamanho', colCloth: 'Pano', any: 'qualquer', unknown: 'desconhecido',
@@ -536,6 +581,13 @@ dialog .card { margin: 0; box-shadow: none; }
       notifyTitle: 'E-mailmeldingen', notifyOn: 'Nieuwe partnerzoekopdrachten van anderen worden gemaild naar {to}.', notifyOff: 'E-mail is niet ingesteld op de server (zie README).', notifyNext: 'Volgende controle: {when}', notifyLast: 'Laatste controle: {when} – {open} open, {new} nieuw', scanNow: 'Nu controleren', testMail: 'Test-e-mail sturen', testMailSent: 'Test-e-mail verstuurd naar {to}.', scanDone: 'Gecontroleerd: {open} open partnerzoekopdrachten, {new} nieuw.', scanMailed: 'E-mail verstuurd.', 'err.mail-not-configured': 'E-mail is niet ingesteld op de server.', 'err.mail-failed': 'Versturen van de e-mail mislukt: {reason}',
       dayTitle: 'Alle reserveringen · {day}',
       settingsSummary: 'Tafels & voorkeuren',
+      calendarReminderLabel: 'Kalenderherinnering: minuten vóór de reservering',
+      calendarReminderHint: 'Nieuwe reserveringen worden gemaild met een .ics-kalenderbestand. Standaard: 60 minuten; 0 betekent bij aanvang. Je kalender moet het bestand importeren en herinneringen toestaan. Wijzigingen gelden alleen voor toekomstige reserveringsmails.',
+      calendarRecipient: 'Kalenderbestanden voor reserveringen worden verstuurd naar {to}.',
+      calendarMailSent: 'E-mail met kalenderbestand verstuurd.',
+      calendarMailFailed: 'De reservering bestaat, maar de kalendermail kon niet worden verstuurd. Reserveer niet opnieuw.',
+      calendarMailOff: 'Geen kalendermail verstuurd: stel SMTP en een ontvanger in op de server.',
+      calendarMailUnconfirmed: 'Geen kalendermail verstuurd omdat de server de reservering niet kon bevestigen. Controleer de originele kalender voordat je opnieuw reserveert.',
       settingsIntro: 'De vrije tafel in je voorkeursmaat wordt voorgeselecteerd, daarna met je voorkeurslaken; bij gelijkstand beslist jouw volgorde. Opgeslagen op de server voor al je apparaten.',
       prefSize: 'Voorkeursmaat', prefCloth: 'Voorkeurslaken', orderTitle: 'Tafels en volgorde bij gelijkstand',
       colTable: 'Tafel', colSize: 'Maat', colCloth: 'Laken', any: 'maakt niet uit', unknown: 'onbekend',
@@ -668,7 +720,10 @@ dialog .card { margin: 0; box-shadow: none; }
   const postJSON = async (path, body) => (await api(path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })).json();
   async function billberriesPage(path, form) {
     const options = form ? { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams(form) } : {};
-    return new DOMParser().parseFromString(await (await api(path, options)).text(), 'text/html');
+    const response = await api(path, options);
+    const doc = new DOMParser().parseFromString(await response.text(), 'text/html');
+    doc.calendarMail = response.headers.get('X-BBM-Calendar-Mail');
+    return doc;
   }
   const reservationForm = fields => billberriesPage('api/reservation', fields);
 
@@ -856,6 +911,7 @@ dialog .card { margin: 0; box-shadow: none; }
     };
     options($('prefSize'), tables().map(x => x.size), s.size);
     options($('prefCloth'), tables().map(x => x.cloth), s.cloth);
+    $('calendarReminder').value = s.calendarReminderMinutes ?? 60;
     const move = (k, delta) => { const o = s.order; [o[k], o[k + delta]] = [o[k + delta], o[k]]; changed(); };
     $('orderList').replaceChildren(...s.order.map((id, k) => {
       const x = tableById(id);
@@ -880,6 +936,7 @@ dialog .card { margin: 0; box-shadow: none; }
     if (!n) return;
     const when = epoch => new Intl.DateTimeFormat(tag, { timeZone: 'Europe/Berlin', weekday: 'short', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }).format(new Date(epoch * 1000));
     const lines = [n.configured ? t('notifyOn', { to: n.to.join(', ') }) : t('notifyOff')];
+    if (n.configured) lines.push(t('calendarRecipient', { to: n.to.join(', ') }));
     if (n.nextScanAt) lines.push(t('notifyNext', { when: when(n.nextScanAt) }));
     if (n.lastScan?.at) lines.push(n.lastScan.loggedIn === false ? `${t('notifyLast', { when: when(n.lastScan.at), open: '–', new: '–' })} (${t('errLoginNeeded')})`
       : t('notifyLast', { when: when(n.lastScan.at), open: n.lastScan.open, new: n.lastScan.new }));
@@ -964,11 +1021,13 @@ dialog .card { margin: 0; box-shadow: none; }
       });
       if (!choice) return;
       notice(t('booking'));
-      await reservationForm({ whatHasChanged: 'updateReservation', newValue: 'New', tableID: x.id, rowIdx: String(d.start), rowIdxTo: last,
+      const result = await reservationForm({ whatHasChanged: 'updateReservation', newValue: 'New', tableID: x.id, rowIdx: String(d.start), rowIdxTo: last,
         rsMatchID: d.match, player1ID: d.p1, player2ID: choice.partner?.id || '', mpID: choice.mode });
       await load();
       const ok = allBookings().some(b => b.table === x.id && b.epoch === iv.start && b.lines.slice(0, 2).some(l => norm(l) === norm(d.p1Name)));
-      notice(ok ? t('bookedOk', { table: tableName(x.id), day: dayLabel(state.date), from: hhmm(iv.start), to: hhmm(iv.end) }) : t('bookUnconfirmed'), ok);
+      const mailKey = { sent: 'calendarMailSent', failed: 'calendarMailFailed', 'not-configured': 'calendarMailOff', unconfirmed: 'calendarMailUnconfirmed' }[result.calendarMail];
+      const message = ok ? t('bookedOk', { table: tableName(x.id), day: dayLabel(state.date), from: hhmm(iv.start), to: hhmm(iv.end) }) : t('bookUnconfirmed');
+      notice([message, mailKey && t(mailKey)].filter(Boolean).join(' '), ok && (!mailKey || result.calendarMail === 'sent'));
     } catch (e) { error(e); } finally { busy(false); }
   }
 
@@ -1065,6 +1124,14 @@ dialog .card { margin: 0; box-shadow: none; }
   $('longer').onclick = () => { state.len = Math.min(8, state.len + 1); render(); };
   $('prefSize').onchange = e => { state.settings.size = e.target.value; changed(); };
   $('prefCloth').onchange = e => { state.settings.cloth = e.target.value; changed(); };
+  $('calendarReminder').onchange = e => {
+    if (!e.target.reportValidity() || e.target.value === '') {
+      e.target.value = state.settings.calendarReminderMinutes ?? 60;
+      return;
+    }
+    state.settings.calendarReminderMinutes = Number(e.target.value);
+    saveSettings();
+  };
 
   setLocale(localStorage.getItem(LOCALE_KEY) || '');
   applyStatic();

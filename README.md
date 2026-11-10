@@ -8,6 +8,7 @@ Phone-first alternative to the [BSC Karlsruhe Billberries calendar](https://bill
 - **No overlapping bookings:** the page doesn't offer times that overlap one of your reservations, and the server independently rejects a booking that overlaps one of yours on any table or any existing booking on the same table — Billberries itself would accept both.
 - **Solo training or a game with a partner** in one step, without the original site's extra round trip.
 - **Partner-search e-mails:** once a day the server looks for new reservations where another player is looking for a partner (*Suche Spielpartner*) and e-mails them to you, with player, date, time and table including its size and cloth. Days with your own reservations, other players' reservations and partner searches are marked in the date row.
+- **Calendar e-mails:** new reservations made through this app are e-mailed with an importable `.ics` file and a calendar alarm, by default 60 minutes before the start. Change the reminder under *Tables & preferences*; it is saved on the server for all devices.
 - **Languages:** English, German, French, Spanish, Italian, Portuguese and Dutch, following the browser's language; the chooser in the header overrides it per device. Dates and times use the chosen locale.
 
 ## Architecture
@@ -53,6 +54,7 @@ Any browser signed into the Google account works for this, including a desktop. 
 
 ### What is sent, and when
 
+- **Your reservations:** after Billberries confirms a new reservation made through this app, an e-mail is sent immediately to **`NOTIFY_TO`**, using the same SMTP configuration as the notifications below. It contains the booking's date, start/end time, players, table number, size and cloth, plus a **`reservation.ics` attachment** for import into a calendar. This is separate from Billberries' own confirmation e-mail and is not sent for bookings made on the original site or for old reservations found by the daily scan.
 - **Partner searches:** the container loads the Billberries calendar **once a day** at `SCAN_TIME` (local time, Europe/Berlin) plus a new random delay of up to `SCAN_JITTER_MINUTES`. If it finds **new** future reservations by other players marked *Suche Spielpartner*, it sends **one** e-mail listing them: player name, weekday, date, time range, and table number with the size and cloth recorded under *Tables & preferences*, plus links to the app (`APP_URL`) and the original calendar.
 - Each partner search is reported **only once**. If sending fails, it is not marked as reported and is retried at the next scan.
 - The **first scan** after e-mail is configured reports **all** partner searches currently in the calendar; later scans only report new ones.
@@ -60,9 +62,19 @@ Any browser signed into the Google account works for this, including a desktop. 
 - The next scan time is kept in `state.json`, so restarts don't shift it; a scan missed while the container was down runs right after startup.
 - Without e-mail configuration the scan still runs and only logs what it found.
 
+### Calendar attachment and reminder
+
+Under **Tables & preferences → Calendar reminder: minutes before the reservation**, choose the alarm lead time. It defaults to **60 minutes**, accepts whole minutes from **0 to 10080** (seven days), and **0** means an alarm at the start. This is `calendarReminderMinutes` in `state.json`, not an environment variable, so changing it in the web UI needs no container restart. Existing installations pick up the 60-minute default without losing their other settings.
+
+The attachment is a standard iCalendar event (`METHOD:PUBLISH`) with a `VALARM` display reminder. Import it into your calendar to get the alarm; **the calendar app triggers it, not this server**. Clients may override or ignore imported alarms depending on their settings and notification permissions. Event times use UTC instants corresponding to the Europe/Berlin reservation, so daylight-saving changes and other viewing time zones are handled correctly. The event also contains the table properties and players. Each reservation has a stable event UID; importing the same file repeatedly may still create duplicates in some calendar clients.
+
+Changing the reminder only affects **future booking e-mails**; it cannot change files already sent or events already imported. The attachment is an export, **not a live calendar subscription**: if you cancel a booking, also remove the imported event yourself. No cancellation or update attachment is sent automatically.
+
+An SMTP failure **does not undo a successful booking**. The app shows that the booking exists but its calendar e-mail could not be sent; **do not book again** to try to resend it. This immediate booking e-mail is not retried automatically. If the server cannot verify the exact booking, it sends no calendar event and warns you to check the original calendar. An email being accepted by SMTP does not guarantee delivery to the inbox.
+
 ### Where and how to configure
 
-All settings live in **`.env` next to `docker-compose.yml`** on the Docker host, in the same file as `PROXY_SECRET` and `ALLOWED_USER`. The file is excluded from Git; keep it readable only by its owner (`chmod 600 .env`).
+SMTP and recipient settings live in **`.env` next to `docker-compose.yml`** on the Docker host, in the same file as `PROXY_SECRET` and `ALLOWED_USER`. The file is excluded from Git; keep it readable only by its owner (`chmod 600 .env`). The calendar reminder is instead managed through the web UI and saved in `state.json`, as described above.
 
 `docker-compose` copies the variables from `.env` into the container's environment **when it creates the container**, and the server reads them once at startup. After editing `.env`, run:
 
@@ -82,7 +94,7 @@ docker-compose up -d    # recreates the container with the new environment
 
 | Variable | Default | Meaning |
 |---|---|---|
-| `NOTIFY_TO` | – | Recipient address(es), comma-separated. **Any address** – it doesn't have to be the one of the Google account used to log in to Billberries. |
+| `NOTIFY_TO` | – | Recipient address(es) for booking/calendar e-mails, partner searches and login reminders, comma-separated. **Any address** – it doesn't have to be the one of the Google account used to log in to Billberries. |
 | `SMTP_HOST` | – | SMTP server host name or IP address, as reachable **from inside the container** |
 | `SMTP_PORT` | `587` | SMTP port: usually `587` with `starttls`, `465` with `ssl`, `25` for a relay without encryption |
 | `SMTP_SECURITY` | `starttls` | `starttls` (upgrade to TLS after connecting), `ssl` (TLS from the start) or `none` (no encryption; only for a trusted relay in your own network) |
@@ -135,3 +147,7 @@ Open the app, expand **Tables & preferences → E-mail notifications**. It shows
 ## Limitations
 
 Billberries has no public API; the app reads its server-rendered HTML and posts its reservation form. If Billberries changes that markup, the app stops rather than guessing. After a booking or cancellation the calendar is reloaded to confirm the result; on an ambiguous response, check the original calendar before trying again. Every booking and cancellation triggers Billberries' confirmation emails. Times use Europe/Berlin. The calendar covers about 14 days.
+
+## Tests
+
+Run `python3 -m unittest discover -s tests -v`. The tests use fake calendars, isolated temporary state files and mocked SMTP/upstream requests. They never create real reservations or send real mail. They cover reminder settings and migration, iCalendar escaping/line folding and daylight-saving time, MIME attachments, verified booking submission, and failures that must not trigger a repeat booking.

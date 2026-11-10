@@ -25,8 +25,9 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
+import uuid
 import zlib
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from email.message import EmailMessage
 from email.utils import formatdate, make_msgid
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -91,6 +92,7 @@ ALLOWED_FIELDS = {
 
 log = logging.getLogger("billberries-mobile")
 state_lock = threading.Lock()
+reservation_lock = threading.Lock()
 
 SLOT_SECONDS = 1800
 # Billberries column order B01..B05 is tables 15, 16, 17, 13, 14 at BSC Karlsruhe.
@@ -107,6 +109,7 @@ DEFAULT_SETTINGS = {
     "size": "2.84 × 1.42 m",
     "cloth": "Simonis",
     "order": ["B03", "B01", "B02", "B04", "B05"],
+    "calendarReminderMinutes": 60,
 }
 
 CELL_RE = re.compile(
@@ -339,10 +342,12 @@ def check_new_booking(table, row_from, row_to):
                 raise Conflict("conflict-table", f"Table {number} is already booked in this period.", table=number)
             if is_mine(booking, player):
                 raise Conflict("conflict-mine", f"You already have table {number} booked in this period.", table=number)
+    return {"table": table, "epoch": start, "end": end, "player": player}
 
 
 def load_settings():
-    return load_state().get("settings") or DEFAULT_SETTINGS
+    # Older state files have no calendar preference yet; keep their other settings.
+    return {**DEFAULT_SETTINGS, **(load_state().get("settings") or {})}
 
 
 def table_number(table_id):
@@ -365,8 +370,12 @@ def validate_settings(data):
     order = data.get("order")
     if not isinstance(order, list) or sorted(order) != sorted(ids):
         raise AppError(400, "invalid-settings", "Invalid table order.")
+    reminder = data.get("calendarReminderMinutes", load_settings()["calendarReminderMinutes"])
+    if type(reminder) is not int or not 0 <= reminder <= 10080:
+        raise AppError(400, "invalid-settings", "Calendar reminder must be a whole number of minutes from 0 to 10080.")
     return {"tables": clean, "order": order,
-            "size": str(data.get("size", ""))[:40], "cloth": str(data.get("cloth", ""))[:40]}
+            "size": str(data.get("size", ""))[:40], "cloth": str(data.get("cloth", ""))[:40],
+            "calendarReminderMinutes": reminder}
 
 
 # ---------- e-mail notifications ----------
@@ -385,6 +394,13 @@ MAIL_TEXT = {
                       "weder buchen noch Spielpartner-Suchen melden.\n\nNeu anmelden: {url}",
         "test_subject": "Billberries Mobile: Test-E-Mail",
         "test_body": "Der E-Mail-Versand von Billberries Mobile funktioniert.",
+        "booking_subject": "Billberries: Deine Reservierung ({when})",
+        "booking_summary": "Billard · Tisch {number}",
+        "booking_body": "Deine Reservierung wurde bestätigt:\n\n{details}\n\n"
+                        "Die angehängte reservation.ics in deinen Kalender importieren. "
+                        "Erinnerung: {minutes} Minuten vor Beginn (0 = zum Beginn).\n\n"
+                        "Die Erinnerung wird von deiner Kalender-App ausgelöst, nicht per E-Mail. "
+                        "Bitte bei einer Stornierung auch den importierten Kalendereintrag löschen.",
     },
     "en": {
         "days": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
@@ -399,6 +415,13 @@ MAIL_TEXT = {
                       "book nor report partner searches.\n\nLog in: {url}",
         "test_subject": "Billberries Mobile: test e-mail",
         "test_body": "Sending e-mail from Billberries Mobile works.",
+        "booking_subject": "Billberries: your reservation ({when})",
+        "booking_summary": "Billiards · table {number}",
+        "booking_body": "Your reservation was confirmed:\n\n{details}\n\n"
+                        "Import the attached reservation.ics into your calendar. "
+                        "Reminder: {minutes} minutes before the start (0 = at the start).\n\n"
+                        "Your calendar app triggers the reminder, not an e-mail. "
+                        "If you cancel, please also delete the imported calendar entry.",
     },
 }
 
@@ -411,7 +434,7 @@ def mail_configured():
     return bool(SMTP["host"] and SMTP["from"] and SMTP["to"])
 
 
-def send_mail(subject, body):
+def send_mail(subject, body, calendar=None):
     if not mail_configured():
         raise AppError(409, "mail-not-configured", "E-mail is not configured (SMTP_HOST, SMTP_FROM, NOTIFY_TO).")
     message = EmailMessage()
@@ -419,6 +442,9 @@ def send_mail(subject, body):
     message["Date"] = formatdate(localtime=True)
     message["Message-ID"] = make_msgid(domain=SMTP["from"].rpartition("@")[2] or None)
     message.set_content(body)
+    if calendar is not None:
+        message.add_attachment(calendar, subtype="calendar", charset="utf-8",
+                               params={"method": "PUBLISH"}, filename="reservation.ics")
     context = ssl.create_default_context()
     try:
         if SMTP["security"] == "ssl":
@@ -435,6 +461,93 @@ def send_mail(subject, body):
         log.warning("sending mail failed: %s", e)
         raise AppError(502, "mail-failed", f"Sending the e-mail failed: {e}", reason=str(e)) from e
     log.info("mail sent: %s", subject)
+
+
+def ics_text(value):
+    """RFC 5545 TEXT escaping; never let a property inject another content line."""
+    return (str(value).replace("\\", "\\\\").replace("\r\n", "\n").replace("\r", "\n")
+            .replace("\n", "\\n").replace(";", "\\;").replace(",", "\\,"))
+
+
+def fold_ics_line(line):
+    """Content lines may use at most 75 UTF-8 octets, including continuation spaces."""
+    parts, chunk, size = [], "", 0
+    for char in line:
+        length = len(char.encode("utf-8"))
+        if size + length > 75:
+            parts.append(chunk)
+            chunk, size = " ", 1
+        chunk += char
+        size += length
+    parts.append(chunk)
+    return "\r\n".join(parts)
+
+
+def booking_calendar(booking, player, reminder, summary, description, location):
+    # UTC timestamps are unambiguous across DST changes and calendar clients. They
+    # represent the same instants as the Europe/Berlin booking, not floating times.
+    utc = lambda epoch: datetime.fromtimestamp(epoch, timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    identity = f'{LOCATION}/{booking["table"]}/{booking["epoch"]}/{player["id"]}'
+    uid = f"{uuid.uuid5(uuid.NAMESPACE_URL, BILLBERRIES + '/' + identity)}@billberries-mobile"
+    lines = [
+        "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Billberries Mobile//Reservations//EN",
+        "CALSCALE:GREGORIAN", "METHOD:PUBLISH", "BEGIN:VEVENT", f"UID:{uid}",
+        f"DTSTAMP:{utc(time.time())}", f'DTSTART:{utc(booking["epoch"])}', f'DTEND:{utc(booking["end"])}',
+        "SUMMARY:" + ics_text(summary), "LOCATION:" + ics_text(location),
+        "DESCRIPTION:" + ics_text(description), "STATUS:CONFIRMED", "TRANSP:OPAQUE",
+        "BEGIN:VALARM", "ACTION:DISPLAY", f"TRIGGER;RELATED=START:-PT{reminder}M",
+        "DESCRIPTION:" + ics_text(summary), "END:VALARM", "END:VEVENT", "END:VCALENDAR",
+    ]
+    return "\r\n".join(fold_ics_line(line) for line in lines) + "\r\n"
+
+
+def send_booking_mail(booking, player):
+    settings, text = load_settings(), mail_text()
+    table = next((t for t in settings["tables"] if t["id"] == booking["table"]), {})
+    number = table.get("number", booking["table"])
+    summary = text["booking_summary"].format(number=number)
+    details = "\n".join([
+        "BSC Karlsruhe", when_text(booking["epoch"], booking["end"]),
+        f'{summary} · {table.get("size") or text["unknown"]} · {table.get("cloth") or text["unknown"]}',
+        " · ".join(line for line in booking["lines"] if line != "None"),
+        APP_URL or BILLBERRIES + OVERVIEW_PATH,
+    ])
+    reminder = settings["calendarReminderMinutes"]
+    calendar = booking_calendar(booking, player, reminder, summary, details, f"BSC Karlsruhe · {summary}")
+    send_mail(text["booking_subject"].format(when=when_text(booking["epoch"], booking["end"])),
+              text["booking_body"].format(details=details, minutes=reminder), calendar=calendar)
+
+
+def submit_reservation(form):
+    """Booking succeeds independently of SMTP. Never retry its POST on mail failure."""
+    if form["whatHasChanged"] != "updateReservation" or form["newValue"] != "New":
+        return billberries("POST", POST_PATH, form=form), None
+    with reservation_lock:
+        expected = check_new_booking(form["tableID"], int(form["rowIdx"] or -1), int(form["rowIdxTo"] or -1))
+        page = billberries("POST", POST_PATH, form=form)
+        # Verify Billberries really created our exact reservation before sending an
+        # event. A successful HTTP response alone is not a booking confirmation.
+        try:
+            confirmed = parse_calendar(page)["bookings"]
+            matches = lambda b: (b["table"] == expected["table"] and b["epoch"] == expected["epoch"]
+                                 and b["end"] == expected["end"] and is_mine(b, expected["player"]))
+            booking = next((b for b in confirmed if matches(b)), None)
+            if booking is None:
+                confirmed = parse_calendar(billberries("GET", OVERVIEW_PATH))["bookings"]
+                booking = next((b for b in confirmed if matches(b)), None)
+            if booking is None:
+                return page, "unconfirmed"
+        except Exception:
+            log.exception("booking POST completed, but calendar confirmation failed")
+            return page, "unconfirmed"
+        if not mail_configured():
+            return page, "not-configured"
+        try:
+            send_booking_mail(booking, expected["player"])
+        except Exception:
+            log.exception("booking confirmed, but calendar e-mail failed; do not rebook")
+            return page, "failed"
+        return page, "sent"
 
 
 def when_text(start, end, with_year=True):
@@ -664,9 +777,9 @@ class Handler(BaseHTTPRequestHandler):
                     if key not in ALLOWED_FIELDS or len(values) != 1 or not ALLOWED_FIELDS[key].match(values[0]):
                         raise AppError(400, "invalid-field", f"Invalid field: {key}", field=key)
                     form[key] = values[0]
-                if form["whatHasChanged"] == "updateReservation" and form["newValue"] == "New":
-                    check_new_booking(form["tableID"], int(form["rowIdx"] or -1), int(form["rowIdxTo"] or -1))
-                return self.send(200, billberries("POST", POST_PATH, form=form), "text/html; charset=utf-8")
+                page, calendar_mail = submit_reservation(form)
+                headers = {"X-BBM-Calendar-Mail": calendar_mail} if calendar_mail else None
+                return self.send(200, page, "text/html; charset=utf-8", headers)
             if method == "GET" and path == "/api/google-url":
                 return self.json(200, {"url": google_url()})
             if method == "POST" and path == "/api/google-code":
