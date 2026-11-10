@@ -51,20 +51,86 @@ Any browser signed into the Google account works for this, including a desktop. 
 
 ## E-mail notifications
 
-The container loads the calendar **once a day** at `SCAN_TIME` (local time, Europe/Berlin) plus a new random offset of up to `SCAN_JITTER_MINUTES`. The next run is kept in `state.json`, so restarts don't shift it; a run missed while the container was down happens at startup. Each scan reports **new** reservations by other players marked *Suche Spielpartner* in one e-mail (each one only once; if sending fails, it is retried at the next scan). If the Billberries login has expired, the scan sends one reminder per expiry instead. *Tables & preferences* in the app shows the recipient and the last and next check, and offers **Check now** and **Send test e-mail**.
+### What is sent, and when
 
-Configure it in `.env` next to `docker-compose.yml` (never committed), then `docker-compose up -d`:
+- **Partner searches:** the container loads the Billberries calendar **once a day** at `SCAN_TIME` (local time, Europe/Berlin) plus a new random delay of up to `SCAN_JITTER_MINUTES`. If it finds **new** future reservations by other players marked *Suche Spielpartner*, it sends **one** e-mail listing them: player name, weekday, date, time range, and table number with the size and cloth recorded under *Tables & preferences*, plus links to the app (`APP_URL`) and the original calendar.
+- Each partner search is reported **only once**. If sending fails, it is not marked as reported and is retried at the next scan.
+- The **first scan** after e-mail is configured reports **all** partner searches currently in the calendar; later scans only report new ones.
+- **Login reminder:** if the scan finds that the server's Billberries login has expired, it sends **one** reminder e-mail per expiry (logging in again resets it).
+- The next scan time is kept in `state.json`, so restarts don't shift it; a scan missed while the container was down runs right after startup.
+- Without e-mail configuration the scan still runs and only logs what it found.
+
+### Where and how to configure
+
+All settings live in **`.env` next to `docker-compose.yml`** on the Docker host, in the same file as `PROXY_SECRET` and `ALLOWED_USER`. The file is excluded from Git; keep it readable only by its owner (`chmod 600 .env`).
+
+`docker-compose` copies the variables from `.env` into the container's environment **when it creates the container**, and the server reads them once at startup. After editing `.env`, run:
+
+```sh
+docker-compose up -d    # recreates the container with the new environment
+```
+
+`docker-compose restart` is **not** enough: it restarts the existing container with its old environment. Recreating is safe; the Billberries login, settings and scan schedule are kept in the `billberries-data` volume.
+
+**Format** (docker-compose reads the file literally):
+
+- one `NAME=value` per line, **no spaces** around `=`, **no quotes** (they would become part of the value);
+- lines starting with `#` are comments;
+- several recipients are separated by commas: `NOTIFY_TO=a@example.org,b@example.org`.
+
+### Variables
 
 | Variable | Default | Meaning |
 |---|---|---|
-| `NOTIFY_TO` | – | Recipient(s), comma-separated. E-mail is off unless `NOTIFY_TO`, `SMTP_HOST` and `SMTP_FROM` are set. |
-| `SMTP_HOST`, `SMTP_PORT` | –, `587` | SMTP server |
-| `SMTP_SECURITY` | `starttls` | `starttls`, `ssl` (implicit TLS, usually port 465) or `none` (e.g. a relay in your own LAN on port 25) |
-| `SMTP_USER`, `SMTP_PASSWORD` | – | Optional SMTP login |
-| `SMTP_FROM` | – | Sender address |
-| `NOTIFY_LANG` | `de` | E-mail language: `de` or `en` |
-| `APP_URL` | – | Link to the app in e-mails, e.g. `https://billberries.example.com/` |
-| `SCAN_TIME`, `SCAN_JITTER_MINUTES` | `08:00`, `180` | Daily scan time and maximum random delay |
+| `NOTIFY_TO` | – | Recipient address(es), comma-separated. **Any address** – it doesn't have to be the one of the Google account used to log in to Billberries. |
+| `SMTP_HOST` | – | SMTP server host name or IP address, as reachable **from inside the container** |
+| `SMTP_PORT` | `587` | SMTP port: usually `587` with `starttls`, `465` with `ssl`, `25` for a relay without encryption |
+| `SMTP_SECURITY` | `starttls` | `starttls` (upgrade to TLS after connecting), `ssl` (TLS from the start) or `none` (no encryption; only for a trusted relay in your own network) |
+| `SMTP_USER`, `SMTP_PASSWORD` | – | SMTP login; leave both out for a relay that doesn't require one |
+| `SMTP_FROM` | – | Sender address. Providers that require a login usually only accept your own address here. |
+| `NOTIFY_LANG` | `de` | Language of the e-mails: `de` or `en` |
+| `APP_URL` | – | Link to the app included in e-mails, e.g. `https://billberries.example.com/` |
+| `SCAN_TIME` | `08:00` | Earliest daily scan time, `HH:MM`, Europe/Berlin |
+| `SCAN_JITTER_MINUTES` | `180` | Maximum random delay after `SCAN_TIME`, chosen anew each day |
+
+E-mail is **enabled only if `NOTIFY_TO`, `SMTP_HOST` and `SMTP_FROM` are all set**.
+
+### Examples
+
+Mail provider with login (recommended for external mailboxes; host and port from your provider's documentation; Gmail needs an *app password*, not the account password):
+
+```
+NOTIFY_TO=you@example.org
+SMTP_HOST=smtp.example.org
+SMTP_PORT=587
+SMTP_SECURITY=starttls
+SMTP_USER=you@example.org
+SMTP_PASSWORD=app-specific-password
+SMTP_FROM=you@example.org
+APP_URL=https://billberries.example.com/
+NOTIFY_LANG=de
+```
+
+Mail relay in your own network that accepts mail from the Docker host without login (e.g. Exim or Postfix with the Docker host in its relay networks):
+
+```
+NOTIFY_TO=you@example.org
+SMTP_HOST=mail.lan.example
+SMTP_PORT=25
+SMTP_SECURITY=none
+SMTP_FROM=billberries@example.org
+APP_URL=https://billberries.example.com/
+```
+
+A relay that delivers directly from a residential internet connection is often rejected or filed as spam by large providers; it works best for addresses the relay delivers itself. Check the spam folder after the first test.
+
+### Verify
+
+Open the app, expand **Tables & preferences → E-mail notifications**. It shows the recipient(s), the last and the next check. **Send test e-mail** sends a short message immediately and shows the SMTP error if it fails; **Check now** runs a scan right away (and e-mails new partner searches). The container log also records scans and sending errors: `docker logs billberries-mobile`.
+
+### Security
+
+`SMTP_PASSWORD` is stored in plain text in `.env` and is visible to anyone who can run `docker inspect` on the Docker host (root and the `docker` group). Prefer an app-specific password that can be revoked independently, never put it into Git, and don't use the password of your Google account.
 
 ## Limitations
 
