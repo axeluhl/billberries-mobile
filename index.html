@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="de"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Billberries Mobile</title>
+<style>
+:root{font:16px/1.45 system-ui,-apple-system,sans-serif;color:#192b39;background:#f3f5f4;--green:#006f5e;--yellow:#ffde76}*{box-sizing:border-box}body{margin:0}button,input,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.42;cursor:not-allowed}.shell{max-width:680px;margin:auto;padding:16px 16px 110px}header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0 20px}header strong{font-size:22px;letter-spacing:-.04em}header small{display:block;color:#546a75;font-size:12px;font-weight:400}.icon{border:0;background:#e4ece9;border-radius:12px;padding:10px 13px;color:var(--green)}h1{font-size:27px;line-height:1.15;letter-spacing:-.05em;margin:0 0 10px}.muted{color:#5d737d;font-size:14px}.card{background:white;border-radius:20px;box-shadow:0 8px 30px #213e4510;padding:20px;margin:14px 0}.row{display:flex;gap:8px;align-items:center}.grow{flex:1}.pill{border:1px solid #d5dfdd;background:#fff;border-radius:12px;padding:10px 14px;min-height:44px;color:#294253}.pill.active{background:#e8f5ee;border-color:var(--green);color:var(--green);font-weight:700}.pill:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid #d69a16;outline-offset:2px}.date-row{display:flex;gap:8px;overflow-x:auto;padding:3px 1px 9px;scrollbar-width:thin}.date-row button{white-space:nowrap;flex:none}.date-field{width:100%;margin-top:7px;min-height:44px;border:1px solid #d5dfdd;border-radius:12px;background:white;padding:8px}.subtitle{font-size:13px;font-weight:750;text-transform:uppercase;letter-spacing:.07em;color:#526b72;margin:20px 0 8px}.time-head{font-size:21px;font-weight:750;letter-spacing:-.02em;margin:8px 0}.timeline{display:flex;gap:4px;overflow-x:auto;scroll-snap-type:x mandatory;padding:10px 2px 14px;touch-action:pan-x;scrollbar-width:thin}.slot{min-width:69px;min-height:72px;display:flex;flex-direction:column;justify-content:center;align-items:center;border:1px solid #dbe3e1;border-radius:11px;background:#f5f7f6;scroll-snap-align:start;user-select:none;touch-action:pan-x}.slot b{font-size:15px}.slot small{font-size:11px;color:#5a7376}.slot.free{background:#edf8f2}.slot.sel{background:var(--yellow);border-color:#d6a11b;color:#2c2d25}.slot.empty{color:#94a1a5}.controls{display:flex;align-items:center;gap:8px;justify-content:center;margin:8px 0}.controls span{min-width:80px;text-align:center}.hint{font-size:12px;color:#637680;text-align:center}.table-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:9px}.table{border:1px solid #d7e3df;background:#fafcfb;text-align:left;border-radius:14px;padding:13px;min-height:94px}.table b{font-size:19px}.table small{display:block;color:#5b7076;font-size:12px}.table.good{border-color:var(--green);background:#eff9f3}.table.picked{outline:2px solid var(--green)}.table.busy{opacity:.55}.badge{display:inline-block;font-size:11px;background:#d7eee3;color:#07563e;border-radius:20px;padding:2px 6px}.primary{border:0;border-radius:12px;background:var(--yellow);color:#182a32;min-height:54px;padding:12px 20px;font-weight:750;width:100%;box-shadow:0 4px 10px #d8b4562d}.primary:disabled{background:#dce1df;box-shadow:none}.secondary{background:white;border:1px solid #cbd9d5;border-radius:12px;min-height:44px;padding:10px 14px;color:var(--green)}.danger{color:#a63634;border-color:#e4c4c0}label{display:block;font-weight:650;font-size:14px;margin:12px 0 4px}select,input[type=text]{width:100%;min-height:45px;padding:10px;border:1px solid #cddbd6;border-radius:11px;background:white}dialog{border:none;border-radius:20px;padding:0;max-width:min(94vw,480px);width:100%;box-shadow:0 18px 90px #142b3666}dialog::backdrop{background:#142b36aa}dialog .card{margin:0;box-shadow:none}dialog h2{margin:0 0 8px}#notice{min-height:22px;color:#923129;font-size:14px}details summary{cursor:pointer;color:var(--green);font-weight:700}.settings-table{display:grid;grid-template-columns:48px 1fr 1fr;gap:8px;align-items:center;margin:8px 0}.settings-table input{min-width:0}.spinner{opacity:.65}.foot{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e1e9e5;padding:12px 16px calc(12px + env(safe-area-inset-bottom))}.foot>div{max-width:648px;margin:auto}.mine{border-bottom:1px solid #e8efeb;padding:10px 0}.mine button{float:right}.original{font-size:13px;text-align:center;margin:15px}.original a,.linkish{color:var(--green)}.linkish{background:none;border:0;padding:0;font:inherit;text-decoration:underline}#bbLogin ol{padding-left:20px}#bbLogin li{margin:12px 0}
+</style>
+<body><main class="shell" id="app" hidden><header><div><strong>Billberries <span style="color:var(--green)">Mobile</span></strong><small>BSC Karlsruhe · Reservierung</small></div><button id="refresh" class="icon" title="Aktualisieren" aria-label="Aktualisieren">↻</button></header>
+<h1>Wann möchtest du spielen?</h1><p class="muted" id="subtitle">Freie Zeiten und Tische werden geladen …</p><div id="notice" role="alert"></div><section class="card" id="bbLogin" hidden><h2 style="margin-top:0">Bei Billberries anmelden</h2><p>Der Server braucht eine Billberries-Anmeldung, um für dich zu buchen. Das ist nur selten nötig.</p><ol><li><button id="googleOpen" class="primary" type="button">Google-Anmeldung öffnen</button><p class="muted">Öffnet einen neuen Tab. Nach der Anmeldung zeigt Billberries „User email not available …“ – <strong>das ist so gewollt</strong>: der Anmeldecode steht nur in der Adresse.</p></li><li>Die Adresse dieser Seite komplett kopieren (Adressleiste antippen → kopieren), hierher zurückkehren:<div class="row" style="margin-top:8px"><button id="googlePaste" class="secondary" type="button">Einfügen</button><span class="muted">oder unten einfügen</span></div><input id="googleCode" type="text" autocomplete="off" placeholder="https://billberries.de/login/callback#…code=…" aria-label="Adresse der Billberries-Seite"></li><li><button id="googleSubmit" class="primary" type="button">Anmeldung abschließen</button></li></ol><p class="muted" id="bbLoginStatus" role="status"></p></section>
+<section class="card"><div class="subtitle">Datum</div><div class="date-row" id="dates"></div><input id="dateInput" class="date-field" type="date" aria-label="Datum wählen"><div class="subtitle">Uhrzeit</div><div class="time-head" id="timeHead"></div><div class="timeline" id="timeline" aria-label="Startzeit wählen"></div><div class="controls"><button class="icon" id="earlier" aria-label="30 Minuten früher">←</button><span>Verschieben</span><button class="icon" id="later" aria-label="30 Minuten später">→</button></div><div class="controls"><button class="icon" id="shorter" aria-label="30 Minuten kürzer">−</button><span id="duration"></span><button class="icon" id="longer" aria-label="30 Minuten länger">+</button></div><div class="hint">Zeit antippen oder mit den Pfeilen verschieben · Dauer in 30-Minuten-Schritten</div></section>
+<section class="card"><div class="subtitle">Tisch wählen</div><div id="tables" class="table-grid"></div><p class="muted" id="tableHint"></p></section>
+<section class="card"><details id="settings"><summary>Tische &amp; Vorlieben einstellen</summary><p class="muted">Angaben werden nur in diesem Browser gespeichert.</p><div class="settings-table"><b>Tisch</b><b>Größe</b><b>Tuch</b><div id="settingsTables" style="display:contents"></div></div><label for="preferredSize">Bevorzugte Größe</label><select id="preferredSize"></select><label for="preferredCloth">Bevorzugtes Tuch</label><select id="preferredCloth"></select></details></section>
+<section class="card"><div class="subtitle">Bereits belegt</div><div id="bookings" class="muted">Laden …</div></section><p class="original"><a href="https://billberries.de/reservation/billard/0001/" target="_blank" rel="noopener">Original bei Billberries öffnen</a> · <span id="session"></span> · <button id="bbLogout" class="linkish" type="button">Billberries-Anmeldung entfernen</button></p></main>
+<div class="foot" id="footer" hidden><div><button id="book" class="primary" disabled>Verfügbarkeit prüfen</button></div></div>
+<dialog id="modal"><div class="card"><div class="row"><h2 id="modalTitle" class="grow">Reservierung</h2><button class="icon" id="close" aria-label="Schließen">✕</button></div><div id="modalBody"></div></div></dialog>
+<script>
+(() => {
+  'use strict';
+  const OVERVIEW = 'api/calendar';
+  const POST = 'api/reservation';
+  const HEADERS = {'X-Requested-With':'billberries-mobile'};
+  document.getElementById('app').hidden=false;
+  document.getElementById('footer').hidden=false;
+  const T = [15,16,17,13,14].map((number,i)=>({number,id:'B0'+(i+1),size:i<3?'2.84 × 1.42 m':'2.10 × 1.05 m',cloth:i===0||i===2?'Simonis':i===1?'Royal Pro':'Unbekannt'}));
+  const $ = id => document.getElementById(id);
+  const esc = text => String(text).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  let settings;
+  try { settings=JSON.parse(localStorage.getItem('billberries-mobile-settings')||'null'); } catch { settings=null; }
+  settings={tables:T.map(t=>({...t,...(settings?.tables?.find(x=>x.id===t.id)||{})})),size:settings?.size||T[0].size,cloth:settings?.cloth||'Simonis'};
+  const save=()=>localStorage.setItem('billberries-mobile-settings',JSON.stringify(settings));
+  const berlin = new Intl.DateTimeFormat('sv-SE',{timeZone:'Europe/Berlin',year:'numeric',month:'2-digit',day:'2-digit'});
+  const dateKey = n=>berlin.format(new Date(n));
+  const dayName = k=>new Intl.DateTimeFormat('de-DE',{weekday:'short',day:'2-digit',month:'2-digit',timeZone:'UTC'}).format(new Date(k+'T12:00:00Z'));
+  const time = epoch=>new Intl.DateTimeFormat('de-DE',{hour:'2-digit',minute:'2-digit',timeZone:'Europe/Berlin',hourCycle:'h23'}).format(new Date(epoch*1000));
+  const fmt = epoch=>dateKey(epoch*1000)+' '+time(epoch);
+  const state={days:new Map(),date:dateKey(Date.now()),start:null,len:2,table:null,loading:false,sequence:0};
+  function notice(msg){$('notice').textContent=msg||'';}
+  class LoginNeeded extends Error {}
+  async function api(path,options={}){
+    const r=await fetch(path,{credentials:'same-origin',cache:'no-store',...options,headers:{...HEADERS,...(options.headers||{})}});
+    if(r.status===401){showLogin(true);throw new LoginNeeded('Billberries-Anmeldung erforderlich.');}
+    if(!r.ok){let msg='Server-Fehler '+r.status;try{msg=(await r.json()).error||msg;}catch{}throw Error(msg);}
+    return r;
+  }
+  async function request(path,data){
+    const r=await api(path,data?{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams(data)}:{});
+    return new DOMParser().parseFromString(await r.text(),'text/html');
+  }
+  function posted(overrides){const {locationID,...fields}=overrides;return request(POST,fields);}
+  function error(e){if(e instanceof LoginNeeded){notice('');return;}notice(e.message||String(e)); console.error('Billberries Mobile:',e);}
+  function parseOverview(doc){
+    if(doc.querySelector('#login_google')){showLogin(true);throw new LoginNeeded('Billberries-Anmeldung erforderlich.');}
+    const days=new Map(), cells=[...doc.querySelectorAll('.bb_rs_table_cell')]; let current=null;
+    for(const cell of cells){
+      const m=(cell.getAttribute('style')||'').match(/grid-area:\s*(\d+)\s*\/\s*(\d+)\s*\/\s*span\s*(\d+)/);
+      if(!m)continue;
+      const [,r,c,span]=m.map(Number), cls=cell.firstElementChild?.className||'';
+      if(cls.includes('rs-col-header1')){
+        const d=cell.textContent.match(/(\d{2})\.(\d{2})\.(\d{4})/);
+        if(d){current={key:`${d[3]}-${d[2]}-${d[1]}`,rows:new Map(),slots:new Map(),bookings:[]};days.set(current.key,current);} continue;
+      }
+      if(!current||c<1||c>6)continue;
+      if(c===1 && cls.includes('rs-row-header')){
+        const clock=cell.textContent.match(/(\d{2}):(\d{2})/);
+        if(clock)current.rows.set(r,{clock:`${clock[1]}:${clock[2]}`,row:null,epoch:null});
+      }
+      if(c>1){
+        const id=(cell.id||'').match(/^(\d+)_B0([1-5])$/), row=current.rows.get(r);
+        if(!row)continue;
+        const table=T[c-2]; if(!table)continue;
+        let epoch=id?Number(id[1]):null;
+        if(epoch){row.epoch=epoch;row.row=Number(cell.getAttribute('onclick')?.match(/,\s*'(\d+)'/)?.[1]||0);}
+        const booked=cls.includes('rs-item-booked');
+        if(booked&&epoch)current.bookings.push({table:table.id,epoch,span:Number(span),label:cell.textContent.trim().replace(/\s+/g,' '),row:row.row});
+        // A booked cell can span several rows; occupancy is filled after all rows are parsed.
+        const slot=current.slots.get(r)||{};slot[table.id]={free:!!id&&!booked,booked,epoch};current.slots.set(r,slot);
+      }
+    }
+    for(const day of days.values()){
+      for(const b of day.bookings){
+        for(let i=0;i<b.span;i++){
+          const row=[...day.rows.entries()].find(([,v])=>v.epoch===b.epoch+i*1800)?.[0];
+          if(row!==undefined){const slot=day.slots.get(row)||{};slot[b.table]={free:false,booked:true,epoch:b.epoch+i*1800};day.slots.set(row,slot);}
+        }
+      }
+    }
+    if(!days.size)throw Error('Kalender konnte nicht gelesen werden; Billberries hat möglicherweise seine Seite geändert.');
+    return days;
+  }
+  function rows(){return [...(state.days.get(state.date)?.rows.values()||[])].filter(r=>r.epoch&&r.row).sort((a,b)=>a.epoch-b.epoch);}
+  function availability(table,idx){const rs=rows(),d=state.days.get(state.date);if(idx<0||idx+state.len>rs.length)return false;for(let i=idx;i<idx+state.len;i++){const r=rs[i];if(i&&r.epoch!==rs[i-1].epoch+1800)return false;const entry=[...d.rows.entries()].find(([,v])=>v===r);if(!d.slots.get(entry[0])?.[table.id]?.free)return false;}return true;}
+  function score(t){return (t.size===settings.size?4:0)+(t.cloth===settings.cloth?2:0);}
+  function available(idx){return settings.tables.filter(t=>availability(t,idx)).sort((a,b)=>score(b)-score(a));}
+  function selectedIndex(){return rows().findIndex(r=>r.epoch===state.start);}
+  function ensureStart(){const rs=rows();if(!rs.length){state.start=null;return;}if(!rs.some(r=>r.epoch===state.start)){
+    const now=Math.floor(Date.now()/1000),tonight=state.date===dateKey(Date.now());
+    state.start=(rs.find(r=>r.epoch >= (tonight?Math.max(now+900,rs[0].epoch):rs.find(x=>time(x.epoch)>='18:00')?.epoch||rs[0].epoch))||rs[0]).epoch;
+  }}
+  function render(){
+    const rs=rows(),today=dateKey(Date.now()),keys=[...state.days.keys()];
+    $('dates').replaceChildren(...keys.slice(0,14).map(k=>{const b=document.createElement('button');b.className='pill'+(state.date===k?' active':'');b.textContent=k===today?'Heute':k===dateKey(Date.now()+86400000)?'Morgen':dayName(k);b.onclick=()=>setDate(k);return b;}));
+    $('dateInput').min=keys[0]||today;$('dateInput').max=keys.at(-1)||today;$('dateInput').value=state.date;
+    ensureStart();const idx=selectedIndex();
+    $('timeHead').textContent=idx>=0?`${time(state.start)} – ${time(state.start+state.len*1800)}`:'Keine Zeiten verfügbar';
+    $('duration').textContent=`${state.len*30} Min.`;
+    $('earlier').disabled=idx<=0;$('later').disabled=idx<0||idx>=rs.length-1;
+    $('shorter').disabled=state.len<=1;$('longer').disabled=state.len>=8;
+    const timeline=$('timeline');const previous=timeline.scrollLeft;timeline.replaceChildren(...rs.map((r,i)=>{
+      const b=document.createElement('button');const count=settings.tables.filter(t=>availability(t,i)).length;
+      b.className='slot '+(i>=idx&&i<idx+state.len?'sel':count?'free':'empty');b.innerHTML=`<b>${esc(time(r.epoch))}</b><small>${count} frei</small>`;b.title=`${time(r.epoch)}, ${count} Tische frei`;b.onclick=()=>{state.start=r.epoch;state.table=null;render();};return b;
+    }));timeline.scrollLeft=previous;
+    const av=idx<0?[]:available(idx);
+    if(state.table&&!av.some(t=>t.id===state.table))state.table=null;
+    if(!state.table)state.table=av[0]?.id||null;
+    $('tables').replaceChildren(...settings.tables.map(t=>{
+      const free=av.some(x=>x.id===t.id);const b=document.createElement('button');b.type='button';b.disabled=!free;
+      b.className='table'+(free?' good':' busy')+(state.table===t.id?' picked':'');
+      b.innerHTML=`<b>Tisch ${t.number}</b> ${score(t)>=6?'<span class="badge">Dein Favorit</span>':''}<small>${esc(t.size)} · ${esc(t.cloth)}</small><small>${free?'Frei':'Nicht verfügbar'}</small>`;
+      b.onclick=()=>{state.table=t.id;render();};return b;
+    }));
+    $('tableHint').textContent=idx>=0?(av.length?`${av.length} Tisch${av.length===1?'':'e'} für die ganze Dauer frei`:'Für diese Zeit und Dauer kein Tisch frei. Zeit oder Dauer ändern.'):'Bitte ein Datum wählen.';
+    $('book').disabled=!state.table||state.loading;
+    $('book').textContent=state.table?`Tisch ${settings.tables.find(t=>t.id===state.table).number} · ${time(state.start)} prüfen`:'Keine freien Tische';
+    const d=state.days.get(state.date);const books=d?.bookings||[];
+    $('bookings').replaceChildren(...(books.length?books.slice(0,20).map(b=>{
+      const el=document.createElement('div');el.className='mine';const table=T.find(t=>t.id===b.table);el.append(document.createTextNode(`${time(b.epoch)} · Tisch ${table?.number}: ${b.label} `));
+      const btn=document.createElement('button');btn.className='secondary';btn.textContent='Ansehen';btn.onclick=()=>inspect(b);el.append(btn);return el;
+    }):[document.createTextNode('An diesem Tag noch keine Buchungen sichtbar.') ]));
+    $('subtitle').textContent=state.days.size?`Verfügbarkeiten für ${state.days.size} Tage · Stand ${new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})}`:'Verfügbarkeiten werden geladen …';
+  }
+  function setDate(k){if(!state.days.has(k)){notice('Datum außerhalb des Buchungszeitraums.');return;}state.date=k;state.start=null;state.table=null;$('timeline').scrollLeft=0;render();const i=selectedIndex();$('timeline').children[i]?.scrollIntoView({block:'nearest',inline:'center'});}
+  async function load(){const seq=++state.sequence;state.loading=true;$('refresh').disabled=true;notice('');
+    try {const d=await request(OVERVIEW);if(seq!==state.sequence)return;state.days=parseOverview(d);showLogin(false);if(!state.days.has(state.date))state.date=[...state.days.keys()][0];render();status();}
+    catch(e){error(e);}finally{state.loading=false;$('refresh').disabled=false;render();}
+  }
+  function matchScript(doc,regex){const value=[...doc.scripts].map(x=>x.textContent).join('\n').match(regex)?.[1];if(!value)throw Error('Reservierungsdaten nicht gefunden; die Billberries-Seite hat sich möglicherweise geändert.');return value;}
+  function dialogData(doc){
+    const options=sel=>[...(doc.querySelector(sel)?.options||[])].map(o=>({id:o.value,name:o.textContent.trim(),selected:o.selected}));
+    return {match:matchScript(doc,/getElementById\(["']rsMatchID["']\)\.value\s*=\s*["']([a-f0-9-]+)["']/),
+      start:Number(matchScript(doc,/getElementById\(["']rowIdx["']\)\.value\s*=\s*(\d+)/)),
+      p1:doc.querySelector('#player1Select')?.value,p1Name:doc.querySelector('#player1Select')?.selectedOptions?.[0]?.textContent?.trim(),p2:doc.querySelector('#player2Select')?.value,
+      mp:doc.querySelector('#mpSelect')?.value,end:options('#endSlotSelect'),players:options('#player2Select'),
+      canNew:!!doc.querySelector('#confReservation[onclick*="\'New\'"]'),
+      canCancel:!!doc.querySelector('#cancelReservation')};
+  }
+  function summary(table,epoch,len){return `${dateKey(epoch*1000)} · ${time(epoch)}–${time(epoch+len*1800)} · Tisch ${table.number}`;}
+  function openModal(title,content){$('modalTitle').textContent=title;$('modalBody').replaceChildren(content);$('modal').showModal();}
+  async function inspect(b){
+    notice('');try{const doc=await posted({tableID:b.table,rowIdx:String(b.row)}),data=dialogData(doc);const t=T.find(x=>x.id===b.table);
+      const el=document.createElement('div');el.innerHTML=`<p>${esc(b.label)}</p><p class="muted">${esc(summary(t,b.epoch,b.span))}</p>`;
+      if(data.canCancel){const button=document.createElement('button');button.className='secondary danger';button.textContent='Eigene Reservierung stornieren';
+        button.onclick=async()=>{if(!confirm('Diese Reservierung wirklich stornieren?'))return;button.disabled=true;
+          try{const end=data.end.find(x=>x.selected)?.id;if(!end)throw Error('Endzeit der Buchung nicht gefunden.');
+            await posted({whatHasChanged:'updateReservation',newValue:'Cancel',tableID:b.table,rowIdx:String(data.start),rowIdxTo:end,locationID:'0001',rsMatchID:data.match,player1ID:data.p1,player2ID:data.p2||'',mpID:data.mp});
+            $('modal').close();await load();if(state.days.get(state.date)?.bookings.some(x=>x.epoch===b.epoch&&x.table===b.table))notice('Stornierung nicht bestätigt. Bitte Originalseite prüfen.');else notice('Reservierung storniert.');
+          }catch(e){button.disabled=false;error(e);}};el.append(button);
+      }else el.append(Object.assign(document.createElement('p'),{textContent:'Diese Buchung kann mit deinem Konto nicht storniert werden.'}));
+      openModal(`Tisch ${t.number}`,el);
+    }catch(e){error(e);}
+  }
+  async function book(){const t=settings.tables.find(t=>t.id===state.table),idx=selectedIndex();if(!t||idx<0)return;const start=state.start,len=state.len;
+    $('book').disabled=true;notice('Prüfe Verfügbarkeit bei Billberries …');
+    try{const doc=await posted({tableID:t.id,rowIdx:String(rows()[idx].row)}),data=dialogData(doc);
+      if(!data.canNew||data.start!==rows()[idx].row)throw Error('Der gewählte Termin ist nicht mehr frei. Bitte aktualisieren.');
+      const end=String(data.start+len-1);
+      if(!data.end.some(o=>o.id===end))throw Error('Die gewählte Dauer wird von Billberries nicht angeboten.');
+      if(!data.p1||data.p1==='response_request_NotSelected')throw Error('Kein eingeloggter Spieler ausgewählt. Bitte Originalseite prüfen.');
+      const body=document.createElement('div');body.innerHTML=`<p class="muted">${esc(summary(t,start,len))}</p><label for="mode">Spielart</label><select id="mode"><option value="billard_training1">Einzeltraining</option><option value="billard_training2">Mit jemandem spielen</option></select><div id="partnerWrap" hidden><label for="partner">Mitspieler/in</label><input id="partner" type="text" list="partners" placeholder="Name eintippen, auch Gast möglich" autocomplete="off"><datalist id="partners"></datalist><p class="muted">Wähle einen Namen aus der Liste.</p></div><p class="muted">Erst „Jetzt reservieren“ legt die Buchung an.</p>`;
+      const mode=body.querySelector('#mode'),wrap=body.querySelector('#partnerWrap'),input=body.querySelector('#partner'),list=body.querySelector('#partners');
+      for(const p of data.players.filter(p=>p.name&&!p.name.includes('Not Selected')&&p.id!==data.p1)){const o=document.createElement('option');o.value=p.name;list.append(o);}
+      mode.onchange=()=>{wrap.hidden=mode.value==='billard_training1';};
+      const button=document.createElement('button');button.className='primary';button.textContent='Jetzt reservieren';body.append(button);
+      button.onclick=async()=>{const p=mode.value==='billard_training2'?data.players.find(x=>x.name.toLowerCase()===input.value.trim().toLowerCase()):null;
+        if(mode.value==='billard_training2'&&!p){alert('Bitte einen Mitspieler aus der Liste wählen.');return;}
+        button.disabled=true;button.textContent='Reserviere …';
+        try{await posted({whatHasChanged:'updateReservation',newValue:'New',tableID:t.id,rowIdx:String(data.start),rowIdxTo:end,locationID:'0001',rsMatchID:data.match,player1ID:data.p1,player2ID:p?.id||'',mpID:mode.value});
+          $('modal').close();await load();if(state.days.get(state.date)?.bookings.some(x=>x.table===t.id&&x.epoch===start&&data.p1Name&&x.label.includes(data.p1Name)))notice('Reservierung angelegt.');
+          else notice('Buchung nicht bestätigt. Bitte im Originalkalender prüfen, bevor du es erneut versuchst.');
+        }catch(e){button.disabled=false;button.textContent='Jetzt reservieren';error(e);}};
+      openModal('Reservierung prüfen',body);notice('');
+    }catch(e){error(e);}finally{$('book').disabled=false;}
+  }
+  function setupSettings(){
+    const opts=(el,values,current)=>{el.replaceChildren(...values.map(v=>{const o=document.createElement('option');o.value=v;o.textContent=v;return o;}));el.value=current;};
+    opts($('preferredSize'),[...new Set(settings.tables.map(t=>t.size))],settings.size);
+    opts($('preferredCloth'),[...new Set(settings.tables.map(t=>t.cloth))],settings.cloth);
+    $('preferredSize').onchange=e=>{settings.size=e.target.value;save();render();};
+    $('preferredCloth').onchange=e=>{settings.cloth=e.target.value;save();render();};
+    $('settingsTables').replaceChildren();
+    for(const t of settings.tables){const label=document.createElement('b');label.textContent=t.number;const size=document.createElement('input');size.type='text';size.value=t.size;size.setAttribute('aria-label',`Größe Tisch ${t.number}`);
+      const cloth=document.createElement('input');cloth.type='text';cloth.value=t.cloth;cloth.setAttribute('aria-label',`Tuch Tisch ${t.number}`);
+      for(const [el,key] of [[size,'size'],[cloth,'cloth']])el.onchange=()=>{t[key]=el.value.trim()||'Unbekannt';save();setupSettings();render();};
+      $('settingsTables').append(label,size,cloth);}
+  }
+  $('refresh').onclick=load;$('book').onclick=book;$('close').onclick=()=>$('modal').close();
+  $('dateInput').onchange=e=>setDate(e.target.value);
+  $('earlier').onclick=()=>{const i=selectedIndex();if(i>0){state.start=rows()[i-1].epoch;render();$('timeline').children[i-1]?.scrollIntoView({block:'nearest',inline:'center'});}};
+  $('later').onclick=()=>{const i=selectedIndex();if(i<rows().length-1){state.start=rows()[i+1].epoch;render();$('timeline').children[i+1]?.scrollIntoView({block:'nearest',inline:'center'});}};
+  $('shorter').onclick=()=>{state.len=Math.max(1,state.len-1);render();};$('longer').onclick=()=>{state.len=Math.min(8,state.len+1);render();};
+  function showLogin(on){$('bbLogin').hidden=!on;if(on)$('subtitle').textContent='Billberries-Anmeldung erforderlich';}
+  async function status(){try{const s=await (await api('api/status')).json();$('session').textContent=s.loggedIn?`Billberries: ${s.user||'angemeldet'}${s.loginAt?' seit '+new Date(s.loginAt*1000).toLocaleDateString('de-DE'):''}`:'Billberries: nicht angemeldet';}catch(e){}}
+  $('googleOpen').onclick=async()=>{const w=window.open('about:blank','_blank');try{const {url}=await (await api('api/google-url')).json();if(w)w.location=url;else location.href=url;$('bbLoginStatus').textContent='Nach der Google-Anmeldung die Adresse der Billberries-Seite kopieren und hier einfügen.';}catch(e){if(w)w.close();$('bbLoginStatus').textContent=e.message;}};
+  $('googlePaste').onclick=async()=>{try{$('googleCode').value=await navigator.clipboard.readText();}catch(e){$('bbLoginStatus').textContent='Einfügen nicht erlaubt – bitte lang ins Feld tippen und „Einfügen“ wählen.';$('googleCode').focus();}};
+  $('googleSubmit').onclick=async()=>{const b=$('googleSubmit');b.disabled=true;$('bbLoginStatus').textContent='Melde an …';
+    try{const r=await (await api('api/google-code',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:$('googleCode').value})})).json();$('googleCode').value='';$('bbLoginStatus').textContent='';showLogin(false);notice(`Angemeldet als ${r.user||'Billberries-Nutzer'}.`);await load();}
+    catch(e){$('bbLoginStatus').textContent=e.message;}finally{b.disabled=false;}};
+  $('bbLogout').onclick=async()=>{if(!confirm('Gespeicherte Billberries-Anmeldung auf dem Server löschen?'))return;try{await api('api/billberries-logout',{method:'POST'});showLogin(true);status();}catch(e){error(e);}};
+  setupSettings();load();
+})();
+</script>
+</html>

@@ -1,0 +1,24 @@
+version: "2.4"
+
+services:
+  billberries-mobile:
+    build: .
+    image: billberries-mobile:latest
+    container_name: billberries-mobile
+    restart: unless-stopped
+    ports:
+      - "3040:8080"
+    env_file: .env
+    volumes:
+      - billberries-data:/data
+    mem_limit: 128m
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+
+volumes:
+  billberries-data:
