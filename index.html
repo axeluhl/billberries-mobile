@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#006f5e">
 <title>Billberries Mobile</title>
 <style>
-:root { font: 16px/1.45 system-ui, -apple-system, sans-serif; color: #192b39; background: #f3f5f4; --green: #006f5e; --yellow: #ffde76; --red: #a63634; --blue: #3c5fa8; }
+:root { font: 16px/1.45 system-ui, -apple-system, sans-serif; color: #192b39; background: #f3f5f4; --green: #006f5e; --yellow: #ffde76; --red: #a63634; --blue: #3c5fa8; --others: #8aa29c; --seeking: #e09a1a; }
 * { box-sizing: border-box; }
 body { margin: 0; }
 button, input, select { font: inherit; }
@@ -28,7 +28,16 @@ h2 { margin: 0 0 8px; font-size: 20px; }
 .icon { border: 0; background: #e4ece9; border-radius: 12px; padding: 10px 13px; color: var(--green); min-width: 44px; min-height: 44px; }
 .pill { border: 1px solid #d5dfdd; background: #fff; border-radius: 12px; padding: 10px 14px; min-height: 44px; color: #294253; white-space: nowrap; flex: none; }
 .pill.active { background: #e8f5ee; border-color: var(--green); color: var(--green); font-weight: 700; }
+.pill { position: relative; }
 .pill.has-mine { box-shadow: inset 0 -3px 0 var(--blue); }
+.pill.has-others::after { content: ''; position: absolute; left: 50%; bottom: 6px; width: 6px; height: 6px; margin-left: -3px; border-radius: 50%; background: var(--others); }
+.pill.has-seeking::after { background: var(--seeking); }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: #5d737d; margin: 2px 2px 4px; }
+.legend span { display: inline-flex; align-items: center; gap: 5px; }
+.legend i { display: inline-block; }
+.legend .l-mine { width: 14px; height: 3px; background: var(--blue); }
+.legend .l-others, .legend .l-seeking { width: 6px; height: 6px; border-radius: 50%; background: var(--others); }
+.legend .l-seeking { background: var(--seeking); }
 .date-row { display: flex; gap: 8px; overflow-x: auto; padding: 3px 1px 9px; scrollbar-width: thin; }
 .date-field { width: 100%; margin-top: 6px; min-height: 44px; border: 1px solid #d5dfdd; border-radius: 12px; background: #fff; padding: 8px; }
 .time-head { font-size: 22px; font-weight: 750; letter-spacing: -.02em; margin: 14px 0 0; }
@@ -126,6 +135,7 @@ dialog .card { margin: 0; box-shadow: none; }
   <section class="card">
     <div class="subtitle" data-i18n="dateTitle"></div>
     <div class="date-row" id="dates"></div>
+    <div class="legend" aria-hidden="true"><span><i class="l-mine"></i><span data-i18n="legendMine"></span></span><span><i class="l-others"></i><span data-i18n="legendOthers"></span></span><span><i class="l-seeking"></i><span data-i18n="legendSeeking"></span></span></div>
     <input id="dateInput" class="date-field" type="date" data-i18n-aria="datePick">
     <div class="time-head" id="timeHead"></div>
     <div class="timeline" id="timeline" data-i18n-aria="startPick"></div>
@@ -189,6 +199,7 @@ dialog .card { margin: 0; box-shadow: none; }
       mineTitle: 'My reservations', dateTitle: 'Date', datePick: 'Choose date', startPick: 'Choose start time',
       earlier: '30 minutes earlier', later: '30 minutes later', shorter: '30 minutes shorter', longer: '30 minutes longer',
       move: 'Move', timeHint: 'Tap a start time · duration in 30-minute steps', tableTitle: 'Table',
+      dayMine: 'You have a reservation', dayOthers_one: 'One reservation by someone else', dayOthers_other: '{n} reservations by others', daySeeking: 'Someone is looking for a partner', legendMine: 'yours', legendOthers: 'others', legendSeeking: 'looking for a partner',
       dayTitle: 'All reservations · {day}',
       settingsSummary: 'Tables & preferences',
       settingsIntro: 'The free table with your preferred size is preselected, then your preferred cloth; ties are broken by your order. Stored on the server for all your devices.',
@@ -242,6 +253,7 @@ dialog .card { margin: 0; box-shadow: none; }
       mineTitle: 'Meine Reservierungen', dateTitle: 'Datum', datePick: 'Datum wählen', startPick: 'Startzeit wählen',
       earlier: '30 Minuten früher', later: '30 Minuten später', shorter: '30 Minuten kürzer', longer: '30 Minuten länger',
       move: 'Verschieben', timeHint: 'Startzeit antippen · Dauer in 30-Minuten-Schritten', tableTitle: 'Tisch',
+      dayMine: 'Du hast eine Reservierung', dayOthers_one: 'Eine fremde Reservierung', dayOthers_other: '{n} fremde Reservierungen', daySeeking: 'Jemand sucht einen Spielpartner', legendMine: 'deine', legendOthers: 'andere', legendSeeking: 'sucht Spielpartner',
       dayTitle: 'Alle Reservierungen · {day}',
       settingsSummary: 'Tische & Vorlieben',
       settingsIntro: 'Vorgewählt wird der freie Tisch in deiner bevorzugten Größe, dann mit deinem bevorzugten Tuch; bei Gleichstand entscheidet deine Reihenfolge. Gespeichert auf dem Server, gilt für alle Geräte.',
@@ -295,6 +307,7 @@ dialog .card { margin: 0; box-shadow: none; }
       mineTitle: 'Mes réservations', dateTitle: 'Date', datePick: 'Choisir la date', startPick: 'Choisir l’heure de début',
       earlier: '30 minutes plus tôt', later: '30 minutes plus tard', shorter: '30 minutes de moins', longer: '30 minutes de plus',
       move: 'Décaler', timeHint: 'Touche une heure de début · durée par tranches de 30 minutes', tableTitle: 'Table',
+      dayMine: 'Tu as une réservation', dayOthers_one: 'Une réservation d’un autre joueur', dayOthers_other: '{n} réservations d’autres joueurs', daySeeking: 'Quelqu’un cherche un partenaire', legendMine: 'les tiennes', legendOthers: 'autres', legendSeeking: 'cherche un partenaire',
       dayTitle: 'Toutes les réservations · {day}',
       settingsSummary: 'Tables et préférences',
       settingsIntro: 'La table libre de ta taille préférée est présélectionnée, puis celle de ton tapis préféré ; en cas d’égalité, ton ordre décide. Enregistré sur le serveur pour tous tes appareils.',
@@ -348,6 +361,7 @@ dialog .card { margin: 0; box-shadow: none; }
       mineTitle: 'Mis reservas', dateTitle: 'Fecha', datePick: 'Elegir fecha', startPick: 'Elegir hora de inicio',
       earlier: '30 minutos antes', later: '30 minutos después', shorter: '30 minutos menos', longer: '30 minutos más',
       move: 'Mover', timeHint: 'Toca una hora de inicio · duración en pasos de 30 minutos', tableTitle: 'Mesa',
+      dayMine: 'Tienes una reserva', dayOthers_one: 'Una reserva de otra persona', dayOthers_other: '{n} reservas de otros', daySeeking: 'Alguien busca compañero', legendMine: 'tuyas', legendOthers: 'otros', legendSeeking: 'busca compañero',
       dayTitle: 'Todas las reservas · {day}',
       settingsSummary: 'Mesas y preferencias',
       settingsIntro: 'Se preselecciona la mesa libre de tu tamaño preferido y luego de tu paño preferido; en caso de empate decide tu orden. Guardado en el servidor para todos tus dispositivos.',
@@ -401,6 +415,7 @@ dialog .card { margin: 0; box-shadow: none; }
       mineTitle: 'Le mie prenotazioni', dateTitle: 'Data', datePick: 'Scegli la data', startPick: 'Scegli l’ora di inizio',
       earlier: '30 minuti prima', later: '30 minuti dopo', shorter: '30 minuti in meno', longer: '30 minuti in più',
       move: 'Sposta', timeHint: 'Tocca un’ora di inizio · durata in passi di 30 minuti', tableTitle: 'Tavolo',
+      dayMine: 'Hai una prenotazione', dayOthers_one: 'Una prenotazione di altri', dayOthers_other: '{n} prenotazioni di altri', daySeeking: 'Qualcuno cerca un compagno', legendMine: 'tue', legendOthers: 'altri', legendSeeking: 'cerca un compagno',
       dayTitle: 'Tutte le prenotazioni · {day}',
       settingsSummary: 'Tavoli e preferenze',
       settingsIntro: 'Viene preselezionato il tavolo libero della misura preferita, poi del panno preferito; a parità decide il tuo ordine. Salvato sul server per tutti i tuoi dispositivi.',
@@ -454,6 +469,7 @@ dialog .card { margin: 0; box-shadow: none; }
       mineTitle: 'Minhas reservas', dateTitle: 'Data', datePick: 'Escolher data', startPick: 'Escolher horário de início',
       earlier: '30 minutos mais cedo', later: '30 minutos mais tarde', shorter: '30 minutos a menos', longer: '30 minutos a mais',
       move: 'Mover', timeHint: 'Toque num horário de início · duração em passos de 30 minutos', tableTitle: 'Mesa',
+      dayMine: 'Você tem uma reserva', dayOthers_one: 'Uma reserva de outra pessoa', dayOthers_other: '{n} reservas de outros', daySeeking: 'Alguém procura parceiro', legendMine: 'suas', legendOthers: 'outros', legendSeeking: 'procura parceiro',
       dayTitle: 'Todas as reservas · {day}',
       settingsSummary: 'Mesas e preferências',
       settingsIntro: 'É pré-selecionada a mesa livre no seu tamanho preferido, depois com o seu pano preferido; em caso de empate, decide a sua ordem. Salvo no servidor para todos os seus dispositivos.',
@@ -507,6 +523,7 @@ dialog .card { margin: 0; box-shadow: none; }
       mineTitle: 'Mijn reserveringen', dateTitle: 'Datum', datePick: 'Datum kiezen', startPick: 'Begintijd kiezen',
       earlier: '30 minuten eerder', later: '30 minuten later', shorter: '30 minuten korter', longer: '30 minuten langer',
       move: 'Verschuiven', timeHint: 'Tik op een begintijd · duur in stappen van 30 minuten', tableTitle: 'Tafel',
+      dayMine: 'Je hebt een reservering', dayOthers_one: 'Eén reservering van iemand anders', dayOthers_other: '{n} reserveringen van anderen', daySeeking: 'Iemand zoekt een partner', legendMine: 'jouw', legendOthers: 'anderen', legendSeeking: 'zoekt een partner',
       dayTitle: 'Alle reserveringen · {day}',
       settingsSummary: 'Tafels & voorkeuren',
       settingsIntro: 'De vrije tafel in je voorkeursmaat wordt voorgeselecteerd, daarna met je voorkeurslaken; bij gelijkstand beslist jouw volgorde. Opgeslagen op de server voor al je apparaten.',
@@ -582,6 +599,8 @@ dialog .card { margin: 0; box-shadow: none; }
     const region = (String(browserTag(code)).match(/^[a-z]{2,3}[-_]([A-Za-z]{2})\b/)?.[1] || DEFAULT_REGION[code] || '').toUpperCase();
     return region.length === 2 ? String.fromCodePoint(...[...region].map(ch => 0x1F1E6 + ch.charCodeAt(0) - 65)) : '';
   }
+  // Plural forms per the language's rules: key_one / key_other (other is the fallback).
+  const tn = (key, n, params = {}) => { const form = `${key}_${new Intl.PluralRules(tag).select(n)}`; return t(I18N[lang][form] || I18N.en[form] ? form : `${key}_other`, { n, ...params }); };
   const bbText = line => I18N[lang]['bb.' + line] ?? line; // labels Billberries sends in German
   function applyStatic() {
     document.querySelectorAll('[data-i18n]').forEach(n => { n.textContent = t(n.dataset.i18n); });
@@ -684,6 +703,7 @@ dialog .card { margin: 0; box-shadow: none; }
     return days;
   }
   const allBookings = () => [...state.days.values()].flatMap(d => d.bookings);
+  const isSeeking = b => b.lines.includes('Suche Spielpartner');
   const isMine = b => !!state.me && b.lines.slice(0, 2).some(line => norm(line) === norm(state.me.name));
   const myBookings = () => allBookings().filter(isMine).filter(b => b.end > nowEpoch()).sort((a, b) => a.epoch - b.epoch);
   const currentDay = () => state.days.get(state.date);
@@ -759,8 +779,19 @@ dialog .card { margin: 0; box-shadow: none; }
     if (!state.settings) return;
     ensureSelection();
     const keys = [...state.days.keys()];
-    const myDays = new Set(myBookings().map(b => b.day));
-    $('dates').replaceChildren(...keys.map(k => el('button', { type: 'button', className: 'pill' + (k === state.date ? ' active' : '') + (myDays.has(k) ? ' has-mine' : ''), textContent: dayLabel(k), onclick: () => selectDate(k) })));
+    const upcoming = allBookings().filter(b => b.end > nowEpoch());
+    const dayInfo = k => {
+      const day = upcoming.filter(b => b.day === k), others = day.filter(b => !isMine(b));
+      return { mine: day.length > others.length, others: others.length, seeking: others.some(isSeeking) };
+    };
+    $('dates').replaceChildren(...keys.map(k => {
+      const info = dayInfo(k);
+      const notes = [info.mine && t('dayMine'), info.others && tn('dayOthers', info.others), info.seeking && t('daySeeking')].filter(Boolean);
+      const pill = el('button', { type: 'button', textContent: dayLabel(k), onclick: () => selectDate(k),
+        className: 'pill' + (k === state.date ? ' active' : '') + (info.mine ? ' has-mine' : '') + (info.others ? ' has-others' : '') + (info.seeking ? ' has-seeking' : '') });
+      if (notes.length) { pill.title = notes.join(', '); pill.setAttribute('aria-label', `${dayLabel(k)} – ${notes.join(', ')}`); }
+      return pill;
+    }));
     $('dateInput').min = keys[0] || ''; $('dateInput').max = keys.at(-1) || ''; $('dateInput').value = state.date;
 
     const s = slots(), i = startIndex(), iv = interval(), clash = myClash(i, state.len);
