@@ -1,6 +1,13 @@
 # Billberries Mobile
 
-Phone-first alternative to the [BSC Karlsruhe Billberries calendar](https://billberries.de/reservation/billard/0001/). Pick a day, tap through half-hour start times, move the interval, adjust its length, and choose a free table. Defaults to **2.84 × 1.42 m / Simonis** (tables 15 and 17); table 16 has Royal Pro, tables 13 and 14 are 2.10 × 1.05 m. Table attributes and preferences are editable in the app and stored in the browser. Book solo training or a game with a second player; inspect bookings and cancel your own.
+Phone-first alternative to the [BSC Karlsruhe Billberries calendar](https://billberries.de/reservation/billard/0001/):
+
+- **Pick a time quickly:** opens on tonight (from 18:00) or the next day with free tables; tap through half-hour start times, move the interval, adjust its length.
+- **Your preferred table is preselected:** the first free table matching your preferred **size**, then your preferred **cloth**; ties are broken by your own **ranking** (by default 17 before 15, which have the same size and cloth). Table sizes, cloths, both preferences and the ranking are editable under *Tables & preferences* and stored on the server (`state.json`), so all devices share them. Defaults: tables 15 and 17 are 2.84 × 1.42 m with Simonis, 16 is 2.84 × 1.42 m with Royal Pro, 13 and 14 are 2.10 × 1.05 m.
+- **Your reservations:** the app learns your Billberries player name (e.g. “A. U.”) from the reservation form after each Billberries login, lists your upcoming reservations under *My reservations* with a one-tap **Cancel** (in-app confirmation), and marks the times you already play in the timeline.
+- **No overlapping bookings:** the page doesn't offer times that overlap one of your reservations, and the server independently rejects a booking that overlaps one of yours on any table or any existing booking on the same table — Billberries itself would accept both.
+- **Solo training or a game with a partner** in one step, without the original site's extra round trip.
+- **Languages:** English, German, French, Spanish, Italian, Portuguese and Dutch, following the browser's language; the chooser in the header overrides it per device. Dates and times use the chosen locale.
 
 ## Architecture
 
@@ -9,9 +16,9 @@ Phone ──HTTPS + Basic Auth──▶ reverse proxy (e.g. Apache, billberries.
       ──HTTP + proxy secret──▶ docker-host:3040 ──▶ container ──HTTPS──▶ billberries.de
 ```
 
-- **`server.py`** (Python 3, standard library only) serves `index.html` and a narrow API: read the calendar, open the reservation form, create or cancel a reservation, and log in to Billberries. It is not a general proxy; reservation form fields are allow-listed.
+- **`server.py`** (Python 3, standard library only) serves `index.html` and a narrow API: read the calendar, open the reservation form, create or cancel a reservation (rejecting overlaps), read and store table settings, return your Billberries player name, and log in to Billberries. It is not a general proxy; reservation form fields are allow-listed. Errors carry a stable `code` (e.g. `conflict-mine`) that the page translates.
 - **Who may use it:** the reverse proxy authenticates one user (Basic Auth). It removes the `Authorization` header and instead sends a shared secret (`X-BBM-Proxy-Secret`) and the authenticated user name (`X-BBM-Remote-User`). The container refuses every request without the right secret and user (`PROXY_SECRET`, `ALLOWED_USER`), so direct LAN access to its port cannot book. API calls additionally require an `X-Requested-With` header and a same-origin request, because browsers attach Basic Auth credentials to cross-site requests too.
-- **How it talks to Billberries:** the container stores **one Billberries session cookie** for the user's account in the Docker volume `billberries-data` (`state.json`, mode 0600). It never sees a Google password.
+- **How it talks to Billberries:** the container stores **one Billberries session cookie** for the user's account, the detected player name, and the table settings in the Docker volume `billberries-data` (`state.json`, mode 0600). It never sees a Google password.
 
 It is a single-user app: whoever passes the reverse proxy's authentication books in the name of the Billberries account the container is logged in with.
 

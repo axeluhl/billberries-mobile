@@ -11,6 +11,7 @@ credentials.
 
 import gzip
 import hmac
+import html as htmllib
 import json
 import logging
 import os
@@ -70,13 +71,50 @@ ALLOWED_FIELDS = {
 log = logging.getLogger("billberries-mobile")
 state_lock = threading.Lock()
 
+SLOT_SECONDS = 1800
+# Billberries column order B01..B05 is tables 15, 16, 17, 13, 14 at BSC Karlsruhe.
+DEFAULT_SETTINGS = {
+    "tables": [
+        {"id": "B01", "number": 15, "size": "2.84 × 1.42 m", "cloth": "Simonis"},
+        {"id": "B02", "number": 16, "size": "2.84 × 1.42 m", "cloth": "Royal Pro"},
+        {"id": "B03", "number": 17, "size": "2.84 × 1.42 m", "cloth": "Simonis"},
+        {"id": "B04", "number": 13, "size": "2.10 × 1.05 m", "cloth": ""},
+        {"id": "B05", "number": 14, "size": "2.10 × 1.05 m", "cloth": ""},
+    ],
+    # Preferred properties come first; "order" breaks ties between equally good tables
+    # (e.g. 17 before 15, which have the same size and cloth).
+    "size": "2.84 × 1.42 m",
+    "cloth": "Simonis",
+    "order": ["B03", "B01", "B02", "B04", "B05"],
+}
+
+CELL_RE = re.compile(
+    r'<div class="bb_rs_table_cell" style="grid-area:\s*(\d+)\s*/\s*(\d+)\s*/\s*span\s*(\d+)[^"]*"([^>]*)>'
+    r'\s*<div class="([^"]+)"[^>]*>(.*?)</div>', re.S)
+CELL_ID_RE = re.compile(r'\bid="(\d+)_(B\d{2})"')
+CELL_CLICK_RE = re.compile(r"doReservation\('(B\d{2})','(\d+)'\)")
+
 
 class LoginRequired(Exception):
     pass
 
 
-class UpstreamError(Exception):
-    pass
+class AppError(Exception):
+    """An error the page can translate: stable code, parameters, English fallback message."""
+
+    def __init__(self, status, code, message, **params):
+        super().__init__(message)
+        self.status, self.code, self.params = status, code, params
+
+
+class UpstreamError(AppError):
+    def __init__(self, code, message, **params):
+        super().__init__(502, code, message, **params)
+
+
+class Conflict(AppError):
+    def __init__(self, code, message, **params):
+        super().__init__(409, code, message, **params)
 
 
 def load_state():
@@ -129,7 +167,7 @@ def upstream(method, path, cookie=None, form=None, timeout=30):
     except urllib.error.HTTPError as e:
         response = e  # 3xx and error statuses still carry headers and body
     except (urllib.error.URLError, OSError) as e:
-        raise UpstreamError(f"Billberries nicht erreichbar: {e}") from e
+        raise UpstreamError("upstream-unreachable", "Billberries is not reachable.") from e
     with response:
         raw = response.read()
         if response.headers.get("Content-Encoding") == "gzip":
@@ -174,7 +212,7 @@ def billberries(method, path, form=None):
         update_state(session=None, loggedOutAt=int(time.time()))
         raise LoginRequired()
     if result["status"] >= 400:
-        raise UpstreamError(f"Billberries antwortete mit HTTP {result['status']}")
+        raise UpstreamError("upstream-status", f"Billberries answered with HTTP {result['status']}.", status=result["status"])
     changes = {"lastOkAt": int(time.time())}
     if result["cookie"] and result["cookie"] != cookie:
         changes["session"] = result["cookie"]
@@ -203,17 +241,111 @@ def login_with_code(text):
     match = re.search(r"(?:^|[#?&\s])code=([^&#\s]+)", text.strip())
     code = urllib.parse.unquote(match.group(1)) if match else text.strip()
     if not re.fullmatch(r"[\w/.\-]{10,512}", code):
-        raise ValueError("Kein Google-Code in der eingefügten Adresse gefunden.")
+        raise AppError(400, "login-no-code", "No Google code found in the pasted address.")
     path = "/login/callback?" + urllib.parse.urlencode({"code": code, "scope": "openid email profile"})
     result = upstream("GET", path)
     if not result["cookie"] or result["status"] >= 400:
-        raise ValueError("Billberries hat den Code abgelehnt. Bitte die Google-Anmeldung wiederholen; jeder Code gilt nur einmal und nur kurz.")
-    update_state(session=result["cookie"], loginAt=int(time.time()), loggedOutAt=None)
+        raise AppError(400, "login-rejected", "Billberries rejected the code. Each code works only once and briefly; please repeat the Google login.")
+    update_state(session=result["cookie"], loginAt=int(time.time()), loggedOutAt=None, player=None)
     try:
         billberries("GET", OVERVIEW_PATH)
     except LoginRequired:
-        raise ValueError("Billberries hat keine Anmeldung bestätigt. Bitte erneut versuchen.") from None
+        raise AppError(400, "login-unconfirmed", "Billberries did not confirm the login. Please try again.") from None
     return load_state().get("user")
+
+
+def norm_name(name):
+    return re.sub(r"\s+", "", name or "").lower()
+
+
+def parse_calendar(page):
+    """Bookings, free cells and the rowIdx->epoch mapping from the overview HTML."""
+    bookings, free, row_epoch = [], set(), {}
+    for _row, _col, span, attrs, cls, inner in CELL_RE.findall(page):
+        cell_id = CELL_ID_RE.search(attrs)
+        click = CELL_CLICK_RE.search(attrs)
+        if not cell_id or not click:
+            continue  # headers and past ("too late") cells
+        epoch, table, row, span = int(cell_id.group(1)), cell_id.group(2), int(click.group(2)), int(span)
+        for k in range(span):
+            row_epoch[row + k] = epoch + k * SLOT_SECONDS
+        if "rs-item-booked" in cls:
+            lines = [re.sub(r"\s+", " ", htmllib.unescape(re.sub(r"<[^>]+>", "", part))).strip()
+                     for part in re.split(r"<br\s*/?>", inner)]
+            bookings.append({"table": table, "row": row, "epoch": epoch, "end": epoch + span * SLOT_SECONDS,
+                             "lines": [line for line in lines if line]})
+        elif "rs-item-not-booked" in cls:
+            free.add((table, row))
+    return {"bookings": bookings, "free": free, "rowEpoch": row_epoch}
+
+
+def is_mine(booking, player):
+    me = norm_name(player.get("name")) if player else ""
+    return bool(me) and any(norm_name(line) == me for line in booking["lines"][:2])
+
+
+def get_player(calendar=None):
+    """The logged-in user's Billberries player name and ID, as preselected in the reservation form."""
+    player = load_state().get("player")
+    if player:
+        return player
+    calendar = calendar or parse_calendar(billberries("GET", OVERVIEW_PATH))
+    if not calendar["free"]:
+        return None
+    table, row = min(calendar["free"], key=lambda cell: cell[1])
+    form = dict(FORM_DEFAULTS, tableID=table, rowIdx=str(row))
+    dialog = billberries("POST", POST_PATH, form=form)
+    match = re.search(r'id="player1Select".*?<option value="([^"]+)" selected>\s*([^<]+?)\s*</option>', dialog, re.S)
+    if not match or match.group(1).startswith("response_request_"):
+        return None
+    player = {"id": match.group(1), "name": htmllib.unescape(match.group(2))}
+    update_state(player=player)
+    return player
+
+
+def check_new_booking(table, row_from, row_to):
+    """Billberries itself accepts overlapping reservations; refuse them here."""
+    calendar = parse_calendar(billberries("GET", OVERVIEW_PATH))
+    start, last = calendar["rowEpoch"].get(row_from), calendar["rowEpoch"].get(row_to)
+    if start is None or last is None or row_to < row_from or last - start != (row_to - row_from) * SLOT_SECONDS:
+        raise Conflict("conflict-unavailable", "This period can no longer be booked. Please refresh the calendar.")
+    end = last + SLOT_SECONDS
+    player = get_player(calendar)
+    for booking in calendar["bookings"]:
+        if booking["epoch"] < end and start < booking["end"]:
+            number = table_number(booking["table"])
+            if booking["table"] == table:
+                raise Conflict("conflict-table", f"Table {number} is already booked in this period.", table=number)
+            if is_mine(booking, player):
+                raise Conflict("conflict-mine", f"You already have table {number} booked in this period.", table=number)
+
+
+def load_settings():
+    return load_state().get("settings") or DEFAULT_SETTINGS
+
+
+def table_number(table_id):
+    return next((t["number"] for t in load_settings()["tables"] if t["id"] == table_id), table_id)
+
+
+def validate_settings(data):
+    ids = [t["id"] for t in DEFAULT_SETTINGS["tables"]]
+    tables = data.get("tables")
+    if not isinstance(tables, list) or sorted(t.get("id") for t in tables if isinstance(t, dict)) != sorted(ids):
+        raise AppError(400, "invalid-settings", "Invalid table list.")
+    clean = []
+    for t in tables:
+        number = t.get("number")
+        if not isinstance(number, int) or not 1 <= number <= 99:
+            raise AppError(400, "invalid-settings", "Invalid table number.")
+        clean.append({"id": t["id"], "number": number,
+                      "size": str(t.get("size", ""))[:40].strip(),
+                      "cloth": str(t.get("cloth", ""))[:40].strip()})
+    order = data.get("order")
+    if not isinstance(order, list) or sorted(order) != sorted(ids):
+        raise AppError(400, "invalid-settings", "Invalid table order.")
+    return {"tables": clean, "order": order,
+            "size": str(data.get("size", ""))[:40], "cloth": str(data.get("cloth", ""))[:40]}
 
 
 def keepalive():
@@ -282,7 +414,7 @@ class Handler(BaseHTTPRequestHandler):
     def read_body(self, limit=16384):
         length = int(self.headers.get("Content-Length") or 0)
         if length > limit:
-            raise ValueError("Anfrage zu groß")
+            raise AppError(413, "request-too-large", "Request too large.")
         return self.rfile.read(length).decode("utf-8", "replace")
 
     def do_HEAD(self):
@@ -303,7 +435,7 @@ class Handler(BaseHTTPRequestHandler):
         if not path.startswith("/api/"):
             return self.send(404, "Not found", "text/plain")
         if not self.api_request_allowed():
-            return self.json(403, {"error": "forbidden"})
+            return self.json(403, {"error": "Forbidden", "code": "forbidden"})
         self.api("GET", path)
 
     def do_POST(self):
@@ -311,7 +443,7 @@ class Handler(BaseHTTPRequestHandler):
         if not self.trusted():
             return self.send(403, "Forbidden", "text/plain")
         if not path.startswith("/api/") or not self.api_request_allowed():
-            return self.json(403, {"error": "forbidden"})
+            return self.json(403, {"error": "Forbidden", "code": "forbidden"})
         self.api("POST", path)
 
     def api(self, method, path):
@@ -321,10 +453,19 @@ class Handler(BaseHTTPRequestHandler):
                 return self.json(200, {
                     "loggedIn": bool(state.get("session")),
                     "user": state.get("user"),
+                    "player": state.get("player"),
                     "loginAt": state.get("loginAt"),
                     "lastOkAt": state.get("lastOkAt"),
                     "renewedAt": state.get("renewedAt"),
                 })
+            if method == "GET" and path == "/api/me":
+                return self.json(200, {"player": get_player()})
+            if method == "GET" and path == "/api/settings":
+                return self.json(200, load_settings())
+            if method == "POST" and path == "/api/settings":
+                settings = validate_settings(json.loads(self.read_body() or "{}"))
+                update_state(settings=settings)
+                return self.json(200, settings)
             if method == "GET" and path == "/api/calendar":
                 return self.send(200, billberries("GET", OVERVIEW_PATH), "text/html; charset=utf-8")
             if method == "POST" and path == "/api/reservation":
@@ -332,8 +473,10 @@ class Handler(BaseHTTPRequestHandler):
                 form = dict(FORM_DEFAULTS)
                 for key, values in fields.items():
                     if key not in ALLOWED_FIELDS or len(values) != 1 or not ALLOWED_FIELDS[key].match(values[0]):
-                        return self.json(400, {"error": f"Ungültiges Feld: {key}"})
+                        raise AppError(400, "invalid-field", f"Invalid field: {key}", field=key)
                     form[key] = values[0]
+                if form["whatHasChanged"] == "updateReservation" and form["newValue"] == "New":
+                    check_new_booking(form["tableID"], int(form["rowIdx"] or -1), int(form["rowIdxTo"] or -1))
                 return self.send(200, billberries("POST", POST_PATH, form=form), "text/html; charset=utf-8")
             if method == "GET" and path == "/api/google-url":
                 return self.json(200, {"url": google_url()})
@@ -342,18 +485,18 @@ class Handler(BaseHTTPRequestHandler):
                 user = login_with_code(str(payload.get("text", "")))
                 return self.json(200, {"ok": True, "user": user})
             if method == "POST" and path == "/api/billberries-logout":
-                update_state(session=None, loggedOutAt=int(time.time()))
+                update_state(session=None, player=None, loggedOutAt=int(time.time()))
                 return self.json(200, {"ok": True})
-            return self.json(404, {"error": "not found"})
+            return self.json(404, {"error": "Not found", "code": "not-found"})
         except LoginRequired:
-            return self.json(401, {"error": "billberries-login"})
-        except ValueError as e:
-            return self.json(400, {"error": str(e)})
-        except UpstreamError as e:
-            return self.json(502, {"error": str(e)})
+            return self.json(401, {"error": "Billberries login required", "code": "billberries-login"})
+        except AppError as e:
+            return self.json(e.status, {"error": str(e), "code": e.code, "params": e.params})
+        except ValueError:
+            return self.json(400, {"error": "Bad request", "code": "bad-request"})
         except Exception:
             log.exception("request failed")
-            return self.json(500, {"error": "Interner Fehler"})
+            return self.json(500, {"error": "Internal error", "code": "internal"})
 
 
 def main():

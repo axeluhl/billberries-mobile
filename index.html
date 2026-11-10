@@ -1,210 +1,989 @@
 <!doctype html>
-<html lang="de"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#006f5e">
 <title>Billberries Mobile</title>
 <style>
-:root{font:16px/1.45 system-ui,-apple-system,sans-serif;color:#192b39;background:#f3f5f4;--green:#006f5e;--yellow:#ffde76}*{box-sizing:border-box}body{margin:0}button,input,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.42;cursor:not-allowed}.shell{max-width:680px;margin:auto;padding:16px 16px 110px}header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0 20px}header strong{font-size:22px;letter-spacing:-.04em}header small{display:block;color:#546a75;font-size:12px;font-weight:400}.icon{border:0;background:#e4ece9;border-radius:12px;padding:10px 13px;color:var(--green)}h1{font-size:27px;line-height:1.15;letter-spacing:-.05em;margin:0 0 10px}.muted{color:#5d737d;font-size:14px}.card{background:white;border-radius:20px;box-shadow:0 8px 30px #213e4510;padding:20px;margin:14px 0}.row{display:flex;gap:8px;align-items:center}.grow{flex:1}.pill{border:1px solid #d5dfdd;background:#fff;border-radius:12px;padding:10px 14px;min-height:44px;color:#294253}.pill.active{background:#e8f5ee;border-color:var(--green);color:var(--green);font-weight:700}.pill:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid #d69a16;outline-offset:2px}.date-row{display:flex;gap:8px;overflow-x:auto;padding:3px 1px 9px;scrollbar-width:thin}.date-row button{white-space:nowrap;flex:none}.date-field{width:100%;margin-top:7px;min-height:44px;border:1px solid #d5dfdd;border-radius:12px;background:white;padding:8px}.subtitle{font-size:13px;font-weight:750;text-transform:uppercase;letter-spacing:.07em;color:#526b72;margin:20px 0 8px}.time-head{font-size:21px;font-weight:750;letter-spacing:-.02em;margin:8px 0}.timeline{display:flex;gap:4px;overflow-x:auto;scroll-snap-type:x mandatory;padding:10px 2px 14px;touch-action:pan-x;scrollbar-width:thin}.slot{min-width:69px;min-height:72px;display:flex;flex-direction:column;justify-content:center;align-items:center;border:1px solid #dbe3e1;border-radius:11px;background:#f5f7f6;scroll-snap-align:start;user-select:none;touch-action:pan-x}.slot b{font-size:15px}.slot small{font-size:11px;color:#5a7376}.slot.free{background:#edf8f2}.slot.sel{background:var(--yellow);border-color:#d6a11b;color:#2c2d25}.slot.empty{color:#94a1a5}.controls{display:flex;align-items:center;gap:8px;justify-content:center;margin:8px 0}.controls span{min-width:80px;text-align:center}.hint{font-size:12px;color:#637680;text-align:center}.table-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:9px}.table{border:1px solid #d7e3df;background:#fafcfb;text-align:left;border-radius:14px;padding:13px;min-height:94px}.table b{font-size:19px}.table small{display:block;color:#5b7076;font-size:12px}.table.good{border-color:var(--green);background:#eff9f3}.table.picked{outline:2px solid var(--green)}.table.busy{opacity:.55}.badge{display:inline-block;font-size:11px;background:#d7eee3;color:#07563e;border-radius:20px;padding:2px 6px}.primary{border:0;border-radius:12px;background:var(--yellow);color:#182a32;min-height:54px;padding:12px 20px;font-weight:750;width:100%;box-shadow:0 4px 10px #d8b4562d}.primary:disabled{background:#dce1df;box-shadow:none}.secondary{background:white;border:1px solid #cbd9d5;border-radius:12px;min-height:44px;padding:10px 14px;color:var(--green)}.danger{color:#a63634;border-color:#e4c4c0}label{display:block;font-weight:650;font-size:14px;margin:12px 0 4px}select,input[type=text]{width:100%;min-height:45px;padding:10px;border:1px solid #cddbd6;border-radius:11px;background:white}dialog{border:none;border-radius:20px;padding:0;max-width:min(94vw,480px);width:100%;box-shadow:0 18px 90px #142b3666}dialog::backdrop{background:#142b36aa}dialog .card{margin:0;box-shadow:none}dialog h2{margin:0 0 8px}#notice{min-height:22px;color:#923129;font-size:14px}details summary{cursor:pointer;color:var(--green);font-weight:700}.settings-table{display:grid;grid-template-columns:48px 1fr 1fr;gap:8px;align-items:center;margin:8px 0}.settings-table input{min-width:0}.spinner{opacity:.65}.foot{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e1e9e5;padding:12px 16px calc(12px + env(safe-area-inset-bottom))}.foot>div{max-width:648px;margin:auto}.mine{border-bottom:1px solid #e8efeb;padding:10px 0}.mine button{float:right}.original{font-size:13px;text-align:center;margin:15px}.original a,.linkish{color:var(--green)}.linkish{background:none;border:0;padding:0;font:inherit;text-decoration:underline}#bbLogin ol{padding-left:20px}#bbLogin li{margin:12px 0}
+:root { font: 16px/1.45 system-ui, -apple-system, sans-serif; color: #192b39; background: #f3f5f4; --green: #006f5e; --yellow: #ffde76; --red: #a63634; --blue: #3c5fa8; }
+* { box-sizing: border-box; }
+body { margin: 0; }
+button, input, select { font: inherit; }
+button { cursor: pointer; }
+button:disabled { opacity: .42; cursor: not-allowed; }
+button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px solid #d69a16; outline-offset: 2px; }
+.shell { max-width: 680px; margin: auto; padding: 16px 16px 120px; }
+header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 0 16px; }
+header strong { font-size: 20px; letter-spacing: -.04em; white-space: nowrap; }
+header > div:first-child { min-width: 0; }
+header small { display: block; color: #546a75; font-size: 12px; }
+h1 { font-size: 27px; line-height: 1.15; letter-spacing: -.05em; margin: 0 0 6px; }
+h2 { margin: 0 0 8px; font-size: 20px; }
+.muted { color: #5d737d; font-size: 14px; }
+.card { background: #fff; border-radius: 20px; box-shadow: 0 8px 30px #213e4510; padding: 18px 20px; margin: 14px 0; }
+.subtitle { font-size: 13px; font-weight: 750; text-transform: uppercase; letter-spacing: .07em; color: #526b72; margin: 4px 0 10px; }
+.row { display: flex; gap: 8px; align-items: center; }
+.grow { flex: 1; }
+.icon { border: 0; background: #e4ece9; border-radius: 12px; padding: 10px 13px; color: var(--green); min-width: 44px; min-height: 44px; }
+.pill { border: 1px solid #d5dfdd; background: #fff; border-radius: 12px; padding: 10px 14px; min-height: 44px; color: #294253; white-space: nowrap; flex: none; }
+.pill.active { background: #e8f5ee; border-color: var(--green); color: var(--green); font-weight: 700; }
+.pill.has-mine { box-shadow: inset 0 -3px 0 var(--blue); }
+.date-row { display: flex; gap: 8px; overflow-x: auto; padding: 3px 1px 9px; scrollbar-width: thin; }
+.date-field { width: 100%; margin-top: 6px; min-height: 44px; border: 1px solid #d5dfdd; border-radius: 12px; background: #fff; padding: 8px; }
+.time-head { font-size: 22px; font-weight: 750; letter-spacing: -.02em; margin: 14px 0 0; }
+.timeline { display: flex; gap: 4px; overflow-x: auto; scroll-snap-type: x proximity; padding: 10px 2px 12px; scrollbar-width: thin; }
+.slot { min-width: 66px; min-height: 68px; display: flex; flex-direction: column; justify-content: center; align-items: center; border: 1px solid #dbe3e1; border-radius: 11px; background: #f5f7f6; scroll-snap-align: center; user-select: none; color: #192b39; }
+.slot b { font-size: 15px; }
+.slot small { font-size: 11px; color: #5a7376; }
+.slot.free { background: #edf8f2; }
+.slot.empty { color: #94a1a5; }
+.slot.mine { background: #e8eefb; border-color: #9fb3dd; }
+.slot.mine small { color: var(--blue); font-weight: 700; }
+.slot.sel { background: var(--yellow); border-color: #d6a11b; color: #2c2d25; }
+.slot.sel.clash { background: #f6d4d1; border-color: var(--red); }
+.controls { display: flex; align-items: center; gap: 8px; justify-content: center; margin: 4px 0; }
+.controls span { min-width: 92px; text-align: center; }
+.hint { font-size: 12px; color: #637680; text-align: center; }
+.table-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 9px; }
+.table { border: 1px solid #d7e3df; background: #fafcfb; text-align: left; border-radius: 14px; padding: 12px 13px; min-height: 96px; color: #192b39; }
+.table b { font-size: 19px; }
+.table small { display: block; color: #5b7076; font-size: 12px; }
+.table.free { border-color: var(--green); background: #eff9f3; }
+.table.picked { outline: 3px solid var(--green); outline-offset: -1px; }
+.badge { display: inline-block; font-size: 11px; background: #d7eee3; color: #07563e; border-radius: 20px; padding: 1px 7px; vertical-align: 2px; }
+.list-item { display: flex; gap: 10px; align-items: center; border-bottom: 1px solid #e8efeb; padding: 10px 0; }
+.list-item:last-child { border-bottom: 0; }
+.list-item .what { flex: 1; min-width: 0; }
+.list-item .what b { display: block; }
+.list-item.mine .what b { color: var(--blue); }
+.linkish { background: none; border: 0; padding: 0; color: var(--green); text-decoration: underline; font: inherit; }
+.primary { border: 0; border-radius: 12px; background: var(--yellow); color: #182a32; min-height: 54px; padding: 12px 20px; font-weight: 750; width: 100%; }
+.primary:disabled { background: #dce1df; }
+.secondary { background: #fff; border: 1px solid #cbd9d5; border-radius: 12px; min-height: 44px; padding: 8px 14px; color: var(--green); }
+.secondary.danger { color: var(--red); border-color: #e4c4c0; }
+.danger-btn { border: 0; border-radius: 12px; background: var(--red); color: #fff; min-height: 50px; padding: 10px 18px; font-weight: 700; }
+.segmented { display: flex; gap: 6px; margin: 10px 0; }
+.segmented button { flex: 1; min-height: 50px; border: 1px solid #cbd9d5; border-radius: 12px; background: #fff; color: #294253; }
+.segmented button[aria-pressed="true"] { background: #e8f5ee; border-color: var(--green); color: var(--green); font-weight: 700; }
+label { display: block; font-weight: 650; font-size: 14px; margin: 12px 0 4px; }
+select, input[type=text] { width: 100%; min-height: 44px; padding: 8px 10px; border: 1px solid #cddbd6; border-radius: 11px; background: #fff; }
+.order-row { display: grid; grid-template-columns: 26px 64px 1fr 1fr 44px 44px; gap: 6px; align-items: center; margin: 6px 0; }
+.order-row input { min-width: 0; }
+.order-head { font-size: 12px; color: #5d737d; }
+details summary { cursor: pointer; color: var(--green); font-weight: 700; min-height: 32px; }
+#notice { min-height: 22px; color: var(--red); font-size: 14px; }
+#notice.ok { color: var(--green); }
+dialog { border: 0; border-radius: 20px; padding: 0; max-width: min(94vw, 480px); width: 100%; box-shadow: 0 18px 90px #142b3666; }
+dialog::backdrop { background: #142b36aa; }
+dialog .card { margin: 0; box-shadow: none; }
+.big { font-size: 18px; font-weight: 700; margin: 6px 0; }
+.foot { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1px solid #e1e9e5; padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); }
+.foot > div { max-width: 648px; margin: auto; }
+.original { font-size: 13px; text-align: center; margin: 15px 0; }
+.original a { color: var(--green); }
+.lang { width: auto; max-width: 6.75rem; min-height: 44px; padding: 6px 8px; border-radius: 12px; border: 1px solid #d5dfdd; background: #fff; color: #294253; }
+#bbLogin ol { padding-left: 20px; }
+#bbLogin li { margin: 12px 0; }
 </style>
-<body><main class="shell" id="app" hidden><header><div><strong>Billberries <span style="color:var(--green)">Mobile</span></strong><small>BSC Karlsruhe · Reservierung</small></div><button id="refresh" class="icon" title="Aktualisieren" aria-label="Aktualisieren">↻</button></header>
-<h1>Wann möchtest du spielen?</h1><p class="muted" id="subtitle">Freie Zeiten und Tische werden geladen …</p><div id="notice" role="alert"></div><section class="card" id="bbLogin" hidden><h2 style="margin-top:0">Bei Billberries anmelden</h2><p>Der Server braucht eine Billberries-Anmeldung, um für dich zu buchen. Das ist nur selten nötig.</p><ol><li><button id="googleOpen" class="primary" type="button">Google-Anmeldung öffnen</button><p class="muted">Öffnet einen neuen Tab. Nach der Anmeldung zeigt Billberries „User email not available …“ – <strong>das ist so gewollt</strong>: der Anmeldecode steht nur in der Adresse.</p></li><li>Die Adresse dieser Seite komplett kopieren (Adressleiste antippen → kopieren), hierher zurückkehren:<div class="row" style="margin-top:8px"><button id="googlePaste" class="secondary" type="button">Einfügen</button><span class="muted">oder unten einfügen</span></div><input id="googleCode" type="text" autocomplete="off" placeholder="https://billberries.de/login/callback#…code=…" aria-label="Adresse der Billberries-Seite"></li><li><button id="googleSubmit" class="primary" type="button">Anmeldung abschließen</button></li></ol><p class="muted" id="bbLoginStatus" role="status"></p></section>
-<section class="card"><div class="subtitle">Datum</div><div class="date-row" id="dates"></div><input id="dateInput" class="date-field" type="date" aria-label="Datum wählen"><div class="subtitle">Uhrzeit</div><div class="time-head" id="timeHead"></div><div class="timeline" id="timeline" aria-label="Startzeit wählen"></div><div class="controls"><button class="icon" id="earlier" aria-label="30 Minuten früher">←</button><span>Verschieben</span><button class="icon" id="later" aria-label="30 Minuten später">→</button></div><div class="controls"><button class="icon" id="shorter" aria-label="30 Minuten kürzer">−</button><span id="duration"></span><button class="icon" id="longer" aria-label="30 Minuten länger">+</button></div><div class="hint">Zeit antippen oder mit den Pfeilen verschieben · Dauer in 30-Minuten-Schritten</div></section>
-<section class="card"><div class="subtitle">Tisch wählen</div><div id="tables" class="table-grid"></div><p class="muted" id="tableHint"></p></section>
-<section class="card"><details id="settings"><summary>Tische &amp; Vorlieben einstellen</summary><p class="muted">Angaben werden nur in diesem Browser gespeichert.</p><div class="settings-table"><b>Tisch</b><b>Größe</b><b>Tuch</b><div id="settingsTables" style="display:contents"></div></div><label for="preferredSize">Bevorzugte Größe</label><select id="preferredSize"></select><label for="preferredCloth">Bevorzugtes Tuch</label><select id="preferredCloth"></select></details></section>
-<section class="card"><div class="subtitle">Bereits belegt</div><div id="bookings" class="muted">Laden …</div></section><p class="original"><a href="https://billberries.de/reservation/billard/0001/" target="_blank" rel="noopener">Original bei Billberries öffnen</a> · <span id="session"></span> · <button id="bbLogout" class="linkish" type="button">Billberries-Anmeldung entfernen</button></p></main>
-<div class="foot" id="footer" hidden><div><button id="book" class="primary" disabled>Verfügbarkeit prüfen</button></div></div>
-<dialog id="modal"><div class="card"><div class="row"><h2 id="modalTitle" class="grow">Reservierung</h2><button class="icon" id="close" aria-label="Schließen">✕</button></div><div id="modalBody"></div></div></dialog>
+</head>
+<body>
+<main class="shell">
+  <header>
+    <div><strong>Billberries <span style="color:var(--green)">Mobile</span></strong><small data-i18n="appTagline"></small></div>
+    <div class="row">
+      <select id="language" class="lang" data-i18n-aria="language"></select>
+      <button id="refresh" class="icon" type="button" data-i18n-aria="refresh" data-i18n-title="refresh">↻</button>
+    </div>
+  </header>
+  <h1 data-i18n="heading"></h1>
+  <p class="muted" id="subtitle" data-i18n="loading"></p>
+  <div id="notice" role="status" aria-live="polite"></div>
+
+  <section class="card" id="bbLogin" hidden>
+    <h2 data-i18n="loginTitle"></h2>
+    <p data-i18n="loginIntro"></p>
+    <ol>
+      <li><button id="googleOpen" class="primary" type="button" data-i18n="loginOpen"></button>
+        <p class="muted" data-i18n-html="loginOpenHint"></p></li>
+      <li><span data-i18n="loginCopy"></span>
+        <div class="row" style="margin:8px 0"><button id="googlePaste" class="secondary" type="button" data-i18n="loginPaste"></button><span class="muted" data-i18n="loginPasteAlt"></span></div>
+        <input id="googleCode" type="text" autocomplete="off" placeholder="https://billberries.de/login/callback#…code=…" data-i18n-aria="loginAddress"></li>
+      <li><button id="googleSubmit" class="primary" type="button" data-i18n="loginSubmit"></button></li>
+    </ol>
+    <p class="muted" id="bbLoginStatus" role="status"></p>
+  </section>
+
+  <section class="card" id="mineCard" hidden>
+    <div class="subtitle" data-i18n="mineTitle"></div>
+    <div id="mineList"></div>
+  </section>
+
+  <section class="card">
+    <div class="subtitle" data-i18n="dateTitle"></div>
+    <div class="date-row" id="dates"></div>
+    <input id="dateInput" class="date-field" type="date" data-i18n-aria="datePick">
+    <div class="time-head" id="timeHead"></div>
+    <div class="timeline" id="timeline" data-i18n-aria="startPick"></div>
+    <div class="controls"><button class="icon" id="earlier" type="button" data-i18n-aria="earlier">←</button><span data-i18n="move"></span><button class="icon" id="later" type="button" data-i18n-aria="later">→</button></div>
+    <div class="controls"><button class="icon" id="shorter" type="button" data-i18n-aria="shorter">−</button><span id="duration"></span><button class="icon" id="longer" type="button" data-i18n-aria="longer">+</button></div>
+    <div class="hint" data-i18n="timeHint"></div>
+  </section>
+
+  <section class="card">
+    <div class="subtitle" data-i18n="tableTitle"></div>
+    <div id="tables" class="table-grid"></div>
+    <p class="muted" id="tableHint"></p>
+  </section>
+
+  <section class="card">
+    <div class="subtitle" id="dayTitle"></div>
+    <div id="dayList" class="muted"></div>
+  </section>
+
+  <section class="card">
+    <details id="settings">
+      <summary data-i18n="settingsSummary"></summary>
+      <p class="muted" data-i18n="settingsIntro"></p>
+      <label for="prefSize" data-i18n="prefSize"></label><select id="prefSize"></select>
+      <label for="prefCloth" data-i18n="prefCloth"></label><select id="prefCloth"></select>
+      <label data-i18n="orderTitle"></label>
+      <div class="order-row order-head"><span>#</span><span data-i18n="colTable"></span><span data-i18n="colSize"></span><span data-i18n="colCloth"></span><span></span><span></span></div>
+      <div id="orderList"></div>
+    </details>
+  </section>
+
+  <p class="original"><a href="https://billberries.de/reservation/billard/0001/" target="_blank" rel="noopener" data-i18n="original"></a> · <span id="session"></span> · <button id="bbLogout" class="linkish" type="button" data-i18n="logout"></button></p>
+</main>
+
+<div class="foot"><div><button id="book" class="primary" type="button" disabled data-i18n="loading"></button></div></div>
+
+<dialog id="modal" aria-labelledby="modalTitle">
+  <div class="card">
+    <div class="row"><h2 id="modalTitle" class="grow"></h2><button class="icon" id="modalClose" type="button" data-i18n-aria="close">✕</button></div>
+    <div id="modalBody"></div>
+  </div>
+</dialog>
+
 <script>
 (() => {
   'use strict';
-  const OVERVIEW = 'api/calendar';
-  const POST = 'api/reservation';
-  const HEADERS = {'X-Requested-With':'billberries-mobile'};
-  document.getElementById('app').hidden=false;
-  document.getElementById('footer').hidden=false;
-  const T = [15,16,17,13,14].map((number,i)=>({number,id:'B0'+(i+1),size:i<3?'2.84 × 1.42 m':'2.10 × 1.05 m',cloth:i===0||i===2?'Simonis':i===1?'Royal Pro':'Unbekannt'}));
+
+  // ---------- i18n ----------
+  const LANGUAGES = { en: 'English', de: 'Deutsch', fr: 'Français', es: 'Español', it: 'Italiano', pt: 'Português', nl: 'Nederlands' };
+  const I18N = {
+    en: {
+      appTagline: 'BSC Karlsruhe · Table reservations', refresh: 'Refresh', close: 'Close', language: 'Language',
+      heading: 'When do you want to play?', loading: 'Loading calendar …',
+      loginTitle: 'Log in to Billberries', loginIntro: 'The server needs a Billberries login to book for you. This is rarely necessary.',
+      loginOpen: 'Open Google login',
+      loginOpenHint: 'Opens a new tab. After logging in, Billberries shows “User email not available …” – <strong>that is intended</strong>: the login code is only in the address.',
+      loginCopy: 'Copy the complete address of that page and come back here:', loginPaste: 'Paste', loginPasteAlt: 'or paste below',
+      loginAddress: 'Address of the Billberries page', loginSubmit: 'Complete login',
+      loginAfterOpen: 'After the Google login, copy the address of the Billberries page and paste it here.',
+      loginPasteDenied: 'Pasting is not allowed here – long-press the field and choose “Paste”.', loginBusy: 'Logging in …', loginDone: 'Logged in as {user}.',
+      mineTitle: 'My reservations', dateTitle: 'Date', datePick: 'Choose date', startPick: 'Choose start time',
+      earlier: '30 minutes earlier', later: '30 minutes later', shorter: '30 minutes shorter', longer: '30 minutes longer',
+      move: 'Move', timeHint: 'Tap a start time · duration in 30-minute steps', tableTitle: 'Table',
+      dayTitle: 'Booked · {day}', noBookings: 'No reservations yet.',
+      settingsSummary: 'Tables & preferences',
+      settingsIntro: 'The free table with your preferred size is preselected, then your preferred cloth; ties are broken by your order. Stored on the server for all your devices.',
+      prefSize: 'Preferred size', prefCloth: 'Preferred cloth', orderTitle: 'Tables and order for ties',
+      colTable: 'Table', colSize: 'Size', colCloth: 'Cloth', any: 'any', unknown: 'unknown',
+      sizeOf: 'Size of table {n}', clothOf: 'Cloth of table {n}', up: 'Move table {n} up', down: 'Move table {n} down',
+      original: 'Original at Billberries', logout: 'Remove Billberries login',
+      today: 'Today', tomorrow: 'Tomorrow', timeRange: '{day}, {from} – {to}', noFit: 'The duration no longer fits into this day', noTimes: 'No bookable times',
+      minutes: '{n} min', slotYou: 'You · {n}', slotFree: '{n} free', slotYouTitle: 'You play: {table}', slotFreeTitle: '{n} tables free',
+      tableName: 'Table {n}', favorite: 'Favorite', free: 'free', booked: 'booked',
+      hintClash: 'You already play at {table} at this time ({from}–{to}).', hintFree: '{free} of {total} tables free for the whole duration.',
+      hintNone: 'No table is free for the whole duration – change the time or duration.',
+      cancel: 'Cancel', bookWait: 'Please wait …', bookPickTime: 'Choose a time', bookClash: 'You already have a reservation at this time',
+      bookNoTable: 'No table free', bookAction: 'Book {table} · {from}–{to}',
+      asOf: 'As of {time} · {n} days bookable', session: 'Billberries: {who}', sessionSince: 'Billberries: {who}, since {date}',
+      loggedIn: 'logged in', sessionOut: 'Billberries: not logged in',
+      bookTitle: 'Book', solo: 'Train alone', duo: 'With a partner', partner: 'Partner', partnerPlaceholder: 'Type a name …',
+      partnerHint: 'Choose from the list; “Guest” for guests.', partnerInvalid: 'Please choose a name from the list.', bookNow: 'Book now',
+      tableInfo: 'Table {n} · {size} · {cloth}',
+      cancelTitle: 'Cancel reservation?', keep: 'Keep', cancelConfirm: 'Cancel reservation',
+      logoutTitle: 'Remove Billberries login?', logoutText: 'The server forgets the Billberries login. A new Google login is needed afterwards.', remove: 'Remove',
+      checking: 'Checking with Billberries …', booking: 'Booking …', bookedOk: 'Booked: {table}, {day} {from}–{to}.',
+      bookUnconfirmed: 'Booking not confirmed – check the original calendar before trying again.',
+      cancelling: 'Cancelling …', cancelledOk: 'Reservation cancelled.', cancelUnconfirmed: 'Cancellation not confirmed – please check the original calendar.',
+      errTaken: 'This slot has just been booked. Please refresh.', errDuration: 'Billberries does not offer this duration here.',
+      errNoPlayer: 'Billberries did not preselect you as player.', errCannotCancel: 'This reservation cannot be cancelled with your account.',
+      errEndUnknown: 'End of the reservation not found.', errForm: 'Reservation form unreadable – Billberries may have changed its page.',
+      errCalendar: 'Calendar unreadable – Billberries may have changed its page.', errOutOfRange: 'Date outside the booking period.',
+      errLoginNeeded: 'Billberries login required.', errServer: 'Server error {status}.', errRequest: 'The request was rejected ({code}).',
+      'err.login-no-code': 'No Google code found in the pasted address.',
+      'err.login-rejected': 'Billberries rejected the code. Each code works only once and only briefly – please repeat the Google login.',
+      'err.login-unconfirmed': 'Billberries did not confirm the login. Please try again.',
+      'err.conflict-unavailable': 'This period can no longer be booked. Please refresh.',
+      'err.conflict-table': 'Table {table} is already booked in this period.',
+      'err.conflict-mine': 'You already have table {table} booked in this period.',
+      'err.upstream-unreachable': 'Billberries is not reachable.', 'err.upstream-status': 'Billberries answered with error {status}.',
+      'err.internal': 'Internal server error.',
+      'bb.Partie-2-Personen': 'Game (2 players)', 'bb.Training-1-Person': 'Solo training', 'bb.Suche Spielpartner': 'Looking for a partner',
+      'bb.??? - gerne dazubuchen': '??? – feel free to join', 'bb.Mannschaftsspiel': 'Team match', 'bb.Guest': 'Guest',
+    },
+    de: {
+      appTagline: 'BSC Karlsruhe · Tischreservierung', refresh: 'Aktualisieren', close: 'Schließen', language: 'Sprache',
+      heading: 'Wann möchtest du spielen?', loading: 'Kalender wird geladen …',
+      loginTitle: 'Bei Billberries anmelden', loginIntro: 'Der Server braucht eine Billberries-Anmeldung, um für dich zu buchen. Das ist nur selten nötig.',
+      loginOpen: 'Google-Anmeldung öffnen',
+      loginOpenHint: 'Öffnet einen neuen Tab. Nach der Anmeldung zeigt Billberries „User email not available …“ – <strong>das ist so gewollt</strong>: der Anmeldecode steht nur in der Adresse.',
+      loginCopy: 'Die Adresse dieser Seite komplett kopieren und hierher zurückkehren:', loginPaste: 'Einfügen', loginPasteAlt: 'oder unten einfügen',
+      loginAddress: 'Adresse der Billberries-Seite', loginSubmit: 'Anmeldung abschließen',
+      loginAfterOpen: 'Nach der Google-Anmeldung die Adresse der Billberries-Seite kopieren und hier einfügen.',
+      loginPasteDenied: 'Einfügen hier nicht erlaubt – lang ins Feld tippen und „Einfügen“ wählen.', loginBusy: 'Melde an …', loginDone: 'Angemeldet als {user}.',
+      mineTitle: 'Meine Reservierungen', dateTitle: 'Datum', datePick: 'Datum wählen', startPick: 'Startzeit wählen',
+      earlier: '30 Minuten früher', later: '30 Minuten später', shorter: '30 Minuten kürzer', longer: '30 Minuten länger',
+      move: 'Verschieben', timeHint: 'Startzeit antippen · Dauer in 30-Minuten-Schritten', tableTitle: 'Tisch',
+      dayTitle: 'Belegt · {day}', noBookings: 'Noch keine Reservierungen.',
+      settingsSummary: 'Tische & Vorlieben',
+      settingsIntro: 'Vorgewählt wird der freie Tisch in deiner bevorzugten Größe, dann mit deinem bevorzugten Tuch; bei Gleichstand entscheidet deine Reihenfolge. Gespeichert auf dem Server, gilt für alle Geräte.',
+      prefSize: 'Bevorzugte Größe', prefCloth: 'Bevorzugtes Tuch', orderTitle: 'Tische und Reihenfolge bei Gleichstand',
+      colTable: 'Tisch', colSize: 'Größe', colCloth: 'Tuch', any: 'egal', unknown: 'unbekannt',
+      sizeOf: 'Größe Tisch {n}', clothOf: 'Tuch Tisch {n}', up: 'Tisch {n} nach oben', down: 'Tisch {n} nach unten',
+      original: 'Original bei Billberries', logout: 'Billberries-Anmeldung entfernen',
+      today: 'Heute', tomorrow: 'Morgen', timeRange: '{day}, {from} – {to}', noFit: 'Die Dauer passt nicht mehr in den Tag', noTimes: 'Keine buchbaren Zeiten',
+      minutes: '{n} Min.', slotYou: 'Du · {n}', slotFree: '{n} frei', slotYouTitle: 'Du spielst: {table}', slotFreeTitle: '{n} Tische frei',
+      tableName: 'Tisch {n}', favorite: 'Favorit', free: 'frei', booked: 'belegt',
+      hintClash: 'Du spielst um diese Zeit schon an {table} ({from}–{to}).', hintFree: '{free} von {total} Tischen für die ganze Dauer frei.',
+      hintNone: 'Kein Tisch für die ganze Dauer frei – Zeit oder Dauer ändern.',
+      cancel: 'Stornieren', bookWait: 'Bitte warten …', bookPickTime: 'Zeit wählen', bookClash: 'Du hast zu dieser Zeit schon reserviert',
+      bookNoTable: 'Kein Tisch frei', bookAction: '{table} · {from}–{to} reservieren',
+      asOf: 'Stand {time} · {n} Tage buchbar', session: 'Billberries: {who}', sessionSince: 'Billberries: {who}, seit {date}',
+      loggedIn: 'angemeldet', sessionOut: 'Billberries: nicht angemeldet',
+      bookTitle: 'Reservieren', solo: 'Allein trainieren', duo: 'Mit Partner/in', partner: 'Mitspieler/in', partnerPlaceholder: 'Name eintippen …',
+      partnerHint: 'Aus der Liste wählen; „Guest“ für Gäste.', partnerInvalid: 'Bitte einen Namen aus der Liste wählen.', bookNow: 'Jetzt reservieren',
+      tableInfo: 'Tisch {n} · {size} · {cloth}',
+      cancelTitle: 'Reservierung stornieren?', keep: 'Behalten', cancelConfirm: 'Stornieren',
+      logoutTitle: 'Billberries-Anmeldung entfernen?', logoutText: 'Der Server vergisst die Billberries-Anmeldung. Danach ist eine neue Google-Anmeldung nötig.', remove: 'Entfernen',
+      checking: 'Prüfe bei Billberries …', booking: 'Reserviere …', bookedOk: 'Reserviert: {table}, {day} {from}–{to}.',
+      bookUnconfirmed: 'Reservierung nicht bestätigt – bitte im Originalkalender prüfen, bevor du es erneut versuchst.',
+      cancelling: 'Storniere …', cancelledOk: 'Reservierung storniert.', cancelUnconfirmed: 'Stornierung nicht bestätigt – bitte im Originalkalender prüfen.',
+      errTaken: 'Dieser Termin ist inzwischen belegt. Bitte aktualisieren.', errDuration: 'Diese Dauer bietet Billberries hier nicht an.',
+      errNoPlayer: 'Billberries hat dich nicht als Spieler vorausgewählt.', errCannotCancel: 'Diese Reservierung kann mit deinem Konto nicht storniert werden.',
+      errEndUnknown: 'Ende der Reservierung nicht gefunden.', errForm: 'Reservierungsformular nicht lesbar – Billberries hat seine Seite möglicherweise geändert.',
+      errCalendar: 'Kalender nicht lesbar – Billberries hat seine Seite möglicherweise geändert.', errOutOfRange: 'Datum außerhalb des Buchungszeitraums.',
+      errLoginNeeded: 'Billberries-Anmeldung erforderlich.', errServer: 'Serverfehler {status}.', errRequest: 'Die Anfrage wurde abgelehnt ({code}).',
+      'err.login-no-code': 'Kein Google-Code in der eingefügten Adresse gefunden.',
+      'err.login-rejected': 'Billberries hat den Code abgelehnt. Jeder Code gilt nur einmal und nur kurz – bitte die Google-Anmeldung wiederholen.',
+      'err.login-unconfirmed': 'Billberries hat die Anmeldung nicht bestätigt. Bitte erneut versuchen.',
+      'err.conflict-unavailable': 'Dieser Zeitraum ist nicht mehr buchbar. Bitte aktualisieren.',
+      'err.conflict-table': 'Tisch {table} ist in diesem Zeitraum bereits belegt.',
+      'err.conflict-mine': 'Du hast in diesem Zeitraum bereits Tisch {table} reserviert.',
+      'err.upstream-unreachable': 'Billberries ist nicht erreichbar.', 'err.upstream-status': 'Billberries antwortete mit Fehler {status}.',
+      'err.internal': 'Interner Serverfehler.',
+      'bb.Partie-2-Personen': 'Partie (2 Personen)', 'bb.Training-1-Person': 'Training (1 Person)', 'bb.Suche Spielpartner': 'Suche Spielpartner',
+      'bb.??? - gerne dazubuchen': '??? – gerne dazubuchen', 'bb.Mannschaftsspiel': 'Mannschaftsspiel', 'bb.Guest': 'Gast',
+    },
+    fr: {
+      appTagline: 'BSC Karlsruhe · Réservation de tables', refresh: 'Actualiser', close: 'Fermer', language: 'Langue',
+      heading: 'Quand veux-tu jouer ?', loading: 'Chargement du calendrier …',
+      loginTitle: 'Connexion à Billberries', loginIntro: 'Le serveur a besoin d’une connexion Billberries pour réserver pour toi. C’est rarement nécessaire.',
+      loginOpen: 'Ouvrir la connexion Google',
+      loginOpenHint: 'Ouvre un nouvel onglet. Après la connexion, Billberries affiche « User email not available … » – <strong>c’est voulu</strong> : le code de connexion se trouve uniquement dans l’adresse.',
+      loginCopy: 'Copie l’adresse complète de cette page et reviens ici :', loginPaste: 'Coller', loginPasteAlt: 'ou colle-la ci-dessous',
+      loginAddress: 'Adresse de la page Billberries', loginSubmit: 'Terminer la connexion',
+      loginAfterOpen: 'Après la connexion Google, copie l’adresse de la page Billberries et colle-la ici.',
+      loginPasteDenied: 'Coller n’est pas autorisé ici – appuie longuement sur le champ et choisis « Coller ».', loginBusy: 'Connexion …', loginDone: 'Connecté en tant que {user}.',
+      mineTitle: 'Mes réservations', dateTitle: 'Date', datePick: 'Choisir la date', startPick: 'Choisir l’heure de début',
+      earlier: '30 minutes plus tôt', later: '30 minutes plus tard', shorter: '30 minutes de moins', longer: '30 minutes de plus',
+      move: 'Décaler', timeHint: 'Touche une heure de début · durée par tranches de 30 minutes', tableTitle: 'Table',
+      dayTitle: 'Occupé · {day}', noBookings: 'Pas encore de réservations.',
+      settingsSummary: 'Tables et préférences',
+      settingsIntro: 'La table libre de ta taille préférée est présélectionnée, puis celle de ton tapis préféré ; en cas d’égalité, ton ordre décide. Enregistré sur le serveur pour tous tes appareils.',
+      prefSize: 'Taille préférée', prefCloth: 'Tapis préféré', orderTitle: 'Tables et ordre en cas d’égalité',
+      colTable: 'Table', colSize: 'Taille', colCloth: 'Tapis', any: 'indifférent', unknown: 'inconnu',
+      sizeOf: 'Taille de la table {n}', clothOf: 'Tapis de la table {n}', up: 'Monter la table {n}', down: 'Descendre la table {n}',
+      original: 'Original sur Billberries', logout: 'Supprimer la connexion Billberries',
+      today: 'Aujourd’hui', tomorrow: 'Demain', timeRange: '{day}, {from} – {to}', noFit: 'La durée ne tient plus dans la journée', noTimes: 'Aucun horaire réservable',
+      minutes: '{n} min', slotYou: 'Toi · {n}', slotFree: '{n} libres', slotYouTitle: 'Tu joues : {table}', slotFreeTitle: '{n} tables libres',
+      tableName: 'Table {n}', favorite: 'Favorite', free: 'libre', booked: 'occupée',
+      hintClash: 'Tu joues déjà à la {table} à cette heure ({from}–{to}).', hintFree: '{free} tables sur {total} libres pour toute la durée.',
+      hintNone: 'Aucune table libre pour toute la durée – change l’heure ou la durée.',
+      cancel: 'Annuler', bookWait: 'Patiente …', bookPickTime: 'Choisis une heure', bookClash: 'Tu as déjà une réservation à cette heure',
+      bookNoTable: 'Aucune table libre', bookAction: 'Réserver {table} · {from}–{to}',
+      asOf: 'État {time} · {n} jours réservables', session: 'Billberries : {who}', sessionSince: 'Billberries : {who}, depuis le {date}',
+      loggedIn: 'connecté', sessionOut: 'Billberries : non connecté',
+      bookTitle: 'Réserver', solo: 'Entraînement seul', duo: 'Avec un partenaire', partner: 'Partenaire', partnerPlaceholder: 'Saisis un nom …',
+      partnerHint: 'Choisis dans la liste ; « Guest » pour les invités.', partnerInvalid: 'Choisis un nom dans la liste.', bookNow: 'Réserver maintenant',
+      tableInfo: 'Table {n} · {size} · {cloth}',
+      cancelTitle: 'Annuler la réservation ?', keep: 'Garder', cancelConfirm: 'Annuler la réservation',
+      logoutTitle: 'Supprimer la connexion Billberries ?', logoutText: 'Le serveur oublie la connexion Billberries. Une nouvelle connexion Google sera ensuite nécessaire.', remove: 'Supprimer',
+      checking: 'Vérification auprès de Billberries …', booking: 'Réservation …', bookedOk: 'Réservé : {table}, {day} {from}–{to}.',
+      bookUnconfirmed: 'Réservation non confirmée – vérifie le calendrier original avant de réessayer.',
+      cancelling: 'Annulation …', cancelledOk: 'Réservation annulée.', cancelUnconfirmed: 'Annulation non confirmée – vérifie le calendrier original.',
+      errTaken: 'Ce créneau vient d’être réservé. Actualise.', errDuration: 'Billberries ne propose pas cette durée ici.',
+      errNoPlayer: 'Billberries ne t’a pas présélectionné comme joueur.', errCannotCancel: 'Cette réservation ne peut pas être annulée avec ton compte.',
+      errEndUnknown: 'Fin de la réservation introuvable.', errForm: 'Formulaire de réservation illisible – Billberries a peut-être modifié sa page.',
+      errCalendar: 'Calendrier illisible – Billberries a peut-être modifié sa page.', errOutOfRange: 'Date en dehors de la période de réservation.',
+      errLoginNeeded: 'Connexion Billberries requise.', errServer: 'Erreur serveur {status}.', errRequest: 'La requête a été refusée ({code}).',
+      'err.login-no-code': 'Aucun code Google trouvé dans l’adresse collée.',
+      'err.login-rejected': 'Billberries a refusé le code. Chaque code ne vaut qu’une fois et brièvement – recommence la connexion Google.',
+      'err.login-unconfirmed': 'Billberries n’a pas confirmé la connexion. Réessaie.',
+      'err.conflict-unavailable': 'Cette période n’est plus réservable. Actualise.',
+      'err.conflict-table': 'La table {table} est déjà occupée pendant cette période.',
+      'err.conflict-mine': 'Tu as déjà réservé la table {table} pendant cette période.',
+      'err.upstream-unreachable': 'Billberries est injoignable.', 'err.upstream-status': 'Billberries a répondu avec l’erreur {status}.',
+      'err.internal': 'Erreur interne du serveur.',
+      'bb.Partie-2-Personen': 'Partie (2 joueurs)', 'bb.Training-1-Person': 'Entraînement seul', 'bb.Suche Spielpartner': 'Cherche partenaire',
+      'bb.??? - gerne dazubuchen': '??? – rejoins-nous', 'bb.Mannschaftsspiel': 'Match d’équipe', 'bb.Guest': 'Invité',
+    },
+    es: {
+      appTagline: 'BSC Karlsruhe · Reserva de mesas', refresh: 'Actualizar', close: 'Cerrar', language: 'Idioma',
+      heading: '¿Cuándo quieres jugar?', loading: 'Cargando calendario …',
+      loginTitle: 'Iniciar sesión en Billberries', loginIntro: 'El servidor necesita una sesión de Billberries para reservar por ti. Rara vez es necesario.',
+      loginOpen: 'Abrir inicio de sesión de Google',
+      loginOpenHint: 'Abre una pestaña nueva. Tras iniciar sesión, Billberries muestra «User email not available …» – <strong>es intencionado</strong>: el código de acceso solo está en la dirección.',
+      loginCopy: 'Copia la dirección completa de esa página y vuelve aquí:', loginPaste: 'Pegar', loginPasteAlt: 'o pégala abajo',
+      loginAddress: 'Dirección de la página de Billberries', loginSubmit: 'Completar inicio de sesión',
+      loginAfterOpen: 'Tras el inicio de sesión de Google, copia la dirección de la página de Billberries y pégala aquí.',
+      loginPasteDenied: 'Aquí no se permite pegar – mantén pulsado el campo y elige «Pegar».', loginBusy: 'Iniciando sesión …', loginDone: 'Sesión iniciada como {user}.',
+      mineTitle: 'Mis reservas', dateTitle: 'Fecha', datePick: 'Elegir fecha', startPick: 'Elegir hora de inicio',
+      earlier: '30 minutos antes', later: '30 minutos después', shorter: '30 minutos menos', longer: '30 minutos más',
+      move: 'Mover', timeHint: 'Toca una hora de inicio · duración en pasos de 30 minutos', tableTitle: 'Mesa',
+      dayTitle: 'Ocupado · {day}', noBookings: 'Aún no hay reservas.',
+      settingsSummary: 'Mesas y preferencias',
+      settingsIntro: 'Se preselecciona la mesa libre de tu tamaño preferido y luego de tu paño preferido; en caso de empate decide tu orden. Guardado en el servidor para todos tus dispositivos.',
+      prefSize: 'Tamaño preferido', prefCloth: 'Paño preferido', orderTitle: 'Mesas y orden en caso de empate',
+      colTable: 'Mesa', colSize: 'Tamaño', colCloth: 'Paño', any: 'cualquiera', unknown: 'desconocido',
+      sizeOf: 'Tamaño de la mesa {n}', clothOf: 'Paño de la mesa {n}', up: 'Subir la mesa {n}', down: 'Bajar la mesa {n}',
+      original: 'Original en Billberries', logout: 'Quitar sesión de Billberries',
+      today: 'Hoy', tomorrow: 'Mañana', timeRange: '{day}, {from} – {to}', noFit: 'La duración ya no cabe en el día', noTimes: 'No hay horas reservables',
+      minutes: '{n} min', slotYou: 'Tú · {n}', slotFree: '{n} libres', slotYouTitle: 'Juegas: {table}', slotFreeTitle: '{n} mesas libres',
+      tableName: 'Mesa {n}', favorite: 'Favorita', free: 'libre', booked: 'ocupada',
+      hintClash: 'Ya juegas en la {table} a esa hora ({from}–{to}).', hintFree: '{free} de {total} mesas libres durante todo el tiempo.',
+      hintNone: 'Ninguna mesa libre durante todo el tiempo – cambia la hora o la duración.',
+      cancel: 'Cancelar', bookWait: 'Espera …', bookPickTime: 'Elige una hora', bookClash: 'Ya tienes una reserva a esa hora',
+      bookNoTable: 'Ninguna mesa libre', bookAction: 'Reservar {table} · {from}–{to}',
+      asOf: 'Estado {time} · {n} días reservables', session: 'Billberries: {who}', sessionSince: 'Billberries: {who}, desde {date}',
+      loggedIn: 'con sesión', sessionOut: 'Billberries: sin sesión',
+      bookTitle: 'Reservar', solo: 'Entrenar solo', duo: 'Con compañero/a', partner: 'Compañero/a', partnerPlaceholder: 'Escribe un nombre …',
+      partnerHint: 'Elige de la lista; «Guest» para invitados.', partnerInvalid: 'Elige un nombre de la lista.', bookNow: 'Reservar ahora',
+      tableInfo: 'Mesa {n} · {size} · {cloth}',
+      cancelTitle: '¿Cancelar la reserva?', keep: 'Mantener', cancelConfirm: 'Cancelar reserva',
+      logoutTitle: '¿Quitar la sesión de Billberries?', logoutText: 'El servidor olvida la sesión de Billberries. Después hará falta un nuevo inicio de sesión de Google.', remove: 'Quitar',
+      checking: 'Comprobando con Billberries …', booking: 'Reservando …', bookedOk: 'Reservado: {table}, {day} {from}–{to}.',
+      bookUnconfirmed: 'Reserva no confirmada – revisa el calendario original antes de volver a intentarlo.',
+      cancelling: 'Cancelando …', cancelledOk: 'Reserva cancelada.', cancelUnconfirmed: 'Cancelación no confirmada – revisa el calendario original.',
+      errTaken: 'Esta franja acaba de reservarse. Actualiza.', errDuration: 'Billberries no ofrece esta duración aquí.',
+      errNoPlayer: 'Billberries no te ha preseleccionado como jugador.', errCannotCancel: 'Esta reserva no se puede cancelar con tu cuenta.',
+      errEndUnknown: 'No se encontró el final de la reserva.', errForm: 'Formulario de reserva ilegible – puede que Billberries haya cambiado su página.',
+      errCalendar: 'Calendario ilegible – puede que Billberries haya cambiado su página.', errOutOfRange: 'Fecha fuera del periodo de reservas.',
+      errLoginNeeded: 'Se requiere sesión de Billberries.', errServer: 'Error del servidor {status}.', errRequest: 'La solicitud fue rechazada ({code}).',
+      'err.login-no-code': 'No se encontró ningún código de Google en la dirección pegada.',
+      'err.login-rejected': 'Billberries rechazó el código. Cada código vale una sola vez y por poco tiempo – repite el inicio de sesión de Google.',
+      'err.login-unconfirmed': 'Billberries no confirmó el inicio de sesión. Inténtalo de nuevo.',
+      'err.conflict-unavailable': 'Este periodo ya no se puede reservar. Actualiza.',
+      'err.conflict-table': 'La mesa {table} ya está ocupada en este periodo.',
+      'err.conflict-mine': 'Ya tienes reservada la mesa {table} en este periodo.',
+      'err.upstream-unreachable': 'Billberries no está disponible.', 'err.upstream-status': 'Billberries respondió con el error {status}.',
+      'err.internal': 'Error interno del servidor.',
+      'bb.Partie-2-Personen': 'Partida (2 jugadores)', 'bb.Training-1-Person': 'Entrenamiento individual', 'bb.Suche Spielpartner': 'Busca compañero',
+      'bb.??? - gerne dazubuchen': '??? – únete', 'bb.Mannschaftsspiel': 'Partido por equipos', 'bb.Guest': 'Invitado',
+    },
+    it: {
+      appTagline: 'BSC Karlsruhe · Prenotazione tavoli', refresh: 'Aggiorna', close: 'Chiudi', language: 'Lingua',
+      heading: 'Quando vuoi giocare?', loading: 'Caricamento calendario …',
+      loginTitle: 'Accedi a Billberries', loginIntro: 'Il server ha bisogno di un accesso Billberries per prenotare per te. Serve raramente.',
+      loginOpen: 'Apri accesso Google',
+      loginOpenHint: 'Apre una nuova scheda. Dopo l’accesso, Billberries mostra «User email not available …» – <strong>è voluto</strong>: il codice di accesso è solo nell’indirizzo.',
+      loginCopy: 'Copia l’indirizzo completo di quella pagina e torna qui:', loginPaste: 'Incolla', loginPasteAlt: 'oppure incollalo sotto',
+      loginAddress: 'Indirizzo della pagina Billberries', loginSubmit: 'Completa l’accesso',
+      loginAfterOpen: 'Dopo l’accesso Google, copia l’indirizzo della pagina Billberries e incollalo qui.',
+      loginPasteDenied: 'Qui non è consentito incollare – tieni premuto il campo e scegli «Incolla».', loginBusy: 'Accesso in corso …', loginDone: 'Accesso eseguito come {user}.',
+      mineTitle: 'Le mie prenotazioni', dateTitle: 'Data', datePick: 'Scegli la data', startPick: 'Scegli l’ora di inizio',
+      earlier: '30 minuti prima', later: '30 minuti dopo', shorter: '30 minuti in meno', longer: '30 minuti in più',
+      move: 'Sposta', timeHint: 'Tocca un’ora di inizio · durata in passi di 30 minuti', tableTitle: 'Tavolo',
+      dayTitle: 'Occupato · {day}', noBookings: 'Ancora nessuna prenotazione.',
+      settingsSummary: 'Tavoli e preferenze',
+      settingsIntro: 'Viene preselezionato il tavolo libero della misura preferita, poi del panno preferito; a parità decide il tuo ordine. Salvato sul server per tutti i tuoi dispositivi.',
+      prefSize: 'Misura preferita', prefCloth: 'Panno preferito', orderTitle: 'Tavoli e ordine a parità',
+      colTable: 'Tavolo', colSize: 'Misura', colCloth: 'Panno', any: 'qualsiasi', unknown: 'sconosciuto',
+      sizeOf: 'Misura del tavolo {n}', clothOf: 'Panno del tavolo {n}', up: 'Sposta su il tavolo {n}', down: 'Sposta giù il tavolo {n}',
+      original: 'Originale su Billberries', logout: 'Rimuovi accesso Billberries',
+      today: 'Oggi', tomorrow: 'Domani', timeRange: '{day}, {from} – {to}', noFit: 'La durata non rientra più nella giornata', noTimes: 'Nessun orario prenotabile',
+      minutes: '{n} min', slotYou: 'Tu · {n}', slotFree: '{n} liberi', slotYouTitle: 'Giochi: {table}', slotFreeTitle: '{n} tavoli liberi',
+      tableName: 'Tavolo {n}', favorite: 'Preferito', free: 'libero', booked: 'occupato',
+      hintClash: 'A quest’ora giochi già al {table} ({from}–{to}).', hintFree: '{free} tavoli su {total} liberi per tutta la durata.',
+      hintNone: 'Nessun tavolo libero per tutta la durata – cambia orario o durata.',
+      cancel: 'Disdici', bookWait: 'Attendi …', bookPickTime: 'Scegli un orario', bookClash: 'Hai già una prenotazione a quest’ora',
+      bookNoTable: 'Nessun tavolo libero', bookAction: 'Prenota {table} · {from}–{to}',
+      asOf: 'Aggiornato {time} · {n} giorni prenotabili', session: 'Billberries: {who}', sessionSince: 'Billberries: {who}, dal {date}',
+      loggedIn: 'connesso', sessionOut: 'Billberries: non connesso',
+      bookTitle: 'Prenota', solo: 'Allenamento da solo', duo: 'Con un compagno', partner: 'Compagno/a', partnerPlaceholder: 'Scrivi un nome …',
+      partnerHint: 'Scegli dalla lista; «Guest» per gli ospiti.', partnerInvalid: 'Scegli un nome dalla lista.', bookNow: 'Prenota ora',
+      tableInfo: 'Tavolo {n} · {size} · {cloth}',
+      cancelTitle: 'Disdire la prenotazione?', keep: 'Mantieni', cancelConfirm: 'Disdici prenotazione',
+      logoutTitle: 'Rimuovere l’accesso Billberries?', logoutText: 'Il server dimentica l’accesso Billberries. Poi servirà un nuovo accesso Google.', remove: 'Rimuovi',
+      checking: 'Verifica con Billberries …', booking: 'Prenotazione …', bookedOk: 'Prenotato: {table}, {day} {from}–{to}.',
+      bookUnconfirmed: 'Prenotazione non confermata – controlla il calendario originale prima di riprovare.',
+      cancelling: 'Disdetta …', cancelledOk: 'Prenotazione disdetta.', cancelUnconfirmed: 'Disdetta non confermata – controlla il calendario originale.',
+      errTaken: 'Questo orario è appena stato prenotato. Aggiorna.', errDuration: 'Billberries non offre questa durata qui.',
+      errNoPlayer: 'Billberries non ti ha preselezionato come giocatore.', errCannotCancel: 'Questa prenotazione non può essere disdetta con il tuo account.',
+      errEndUnknown: 'Fine della prenotazione non trovata.', errForm: 'Modulo di prenotazione illeggibile – forse Billberries ha cambiato la pagina.',
+      errCalendar: 'Calendario illeggibile – forse Billberries ha cambiato la pagina.', errOutOfRange: 'Data fuori dal periodo di prenotazione.',
+      errLoginNeeded: 'Serve l’accesso Billberries.', errServer: 'Errore del server {status}.', errRequest: 'La richiesta è stata rifiutata ({code}).',
+      'err.login-no-code': 'Nessun codice Google trovato nell’indirizzo incollato.',
+      'err.login-rejected': 'Billberries ha rifiutato il codice. Ogni codice vale una sola volta e per poco – ripeti l’accesso Google.',
+      'err.login-unconfirmed': 'Billberries non ha confermato l’accesso. Riprova.',
+      'err.conflict-unavailable': 'Questo periodo non è più prenotabile. Aggiorna.',
+      'err.conflict-table': 'Il tavolo {table} è già occupato in questo periodo.',
+      'err.conflict-mine': 'Hai già prenotato il tavolo {table} in questo periodo.',
+      'err.upstream-unreachable': 'Billberries non è raggiungibile.', 'err.upstream-status': 'Billberries ha risposto con l’errore {status}.',
+      'err.internal': 'Errore interno del server.',
+      'bb.Partie-2-Personen': 'Partita (2 giocatori)', 'bb.Training-1-Person': 'Allenamento singolo', 'bb.Suche Spielpartner': 'Cerca compagno',
+      'bb.??? - gerne dazubuchen': '??? – unisciti', 'bb.Mannschaftsspiel': 'Partita a squadre', 'bb.Guest': 'Ospite',
+    },
+    pt: {
+      appTagline: 'BSC Karlsruhe · Reserva de mesas', refresh: 'Atualizar', close: 'Fechar', language: 'Idioma',
+      heading: 'Quando você quer jogar?', loading: 'Carregando calendário …',
+      loginTitle: 'Entrar no Billberries', loginIntro: 'O servidor precisa de um login no Billberries para reservar por você. Isso raramente é necessário.',
+      loginOpen: 'Abrir login do Google',
+      loginOpenHint: 'Abre uma nova aba. Após o login, o Billberries mostra “User email not available …” – <strong>isso é intencional</strong>: o código de login está apenas no endereço.',
+      loginCopy: 'Copie o endereço completo dessa página e volte aqui:', loginPaste: 'Colar', loginPasteAlt: 'ou cole abaixo',
+      loginAddress: 'Endereço da página do Billberries', loginSubmit: 'Concluir login',
+      loginAfterOpen: 'Após o login do Google, copie o endereço da página do Billberries e cole aqui.',
+      loginPasteDenied: 'Colar não é permitido aqui – toque e segure o campo e escolha “Colar”.', loginBusy: 'Entrando …', loginDone: 'Conectado como {user}.',
+      mineTitle: 'Minhas reservas', dateTitle: 'Data', datePick: 'Escolher data', startPick: 'Escolher horário de início',
+      earlier: '30 minutos mais cedo', later: '30 minutos mais tarde', shorter: '30 minutos a menos', longer: '30 minutos a mais',
+      move: 'Mover', timeHint: 'Toque num horário de início · duração em passos de 30 minutos', tableTitle: 'Mesa',
+      dayTitle: 'Ocupado · {day}', noBookings: 'Ainda não há reservas.',
+      settingsSummary: 'Mesas e preferências',
+      settingsIntro: 'É pré-selecionada a mesa livre no seu tamanho preferido, depois com o seu pano preferido; em caso de empate, decide a sua ordem. Salvo no servidor para todos os seus dispositivos.',
+      prefSize: 'Tamanho preferido', prefCloth: 'Pano preferido', orderTitle: 'Mesas e ordem em caso de empate',
+      colTable: 'Mesa', colSize: 'Tamanho', colCloth: 'Pano', any: 'qualquer', unknown: 'desconhecido',
+      sizeOf: 'Tamanho da mesa {n}', clothOf: 'Pano da mesa {n}', up: 'Subir a mesa {n}', down: 'Descer a mesa {n}',
+      original: 'Original no Billberries', logout: 'Remover login do Billberries',
+      today: 'Hoje', tomorrow: 'Amanhã', timeRange: '{day}, {from} – {to}', noFit: 'A duração já não cabe no dia', noTimes: 'Nenhum horário reservável',
+      minutes: '{n} min', slotYou: 'Você · {n}', slotFree: '{n} livres', slotYouTitle: 'Você joga: {table}', slotFreeTitle: '{n} mesas livres',
+      tableName: 'Mesa {n}', favorite: 'Favorita', free: 'livre', booked: 'ocupada',
+      hintClash: 'Você já joga na {table} nesse horário ({from}–{to}).', hintFree: '{free} de {total} mesas livres durante todo o período.',
+      hintNone: 'Nenhuma mesa livre durante todo o período – mude o horário ou a duração.',
+      cancel: 'Cancelar', bookWait: 'Aguarde …', bookPickTime: 'Escolha um horário', bookClash: 'Você já tem uma reserva nesse horário',
+      bookNoTable: 'Nenhuma mesa livre', bookAction: 'Reservar {table} · {from}–{to}',
+      asOf: 'Atualizado {time} · {n} dias reserváveis', session: 'Billberries: {who}', sessionSince: 'Billberries: {who}, desde {date}',
+      loggedIn: 'conectado', sessionOut: 'Billberries: não conectado',
+      bookTitle: 'Reservar', solo: 'Treinar sozinho', duo: 'Com parceiro/a', partner: 'Parceiro/a', partnerPlaceholder: 'Digite um nome …',
+      partnerHint: 'Escolha da lista; “Guest” para convidados.', partnerInvalid: 'Escolha um nome da lista.', bookNow: 'Reservar agora',
+      tableInfo: 'Mesa {n} · {size} · {cloth}',
+      cancelTitle: 'Cancelar a reserva?', keep: 'Manter', cancelConfirm: 'Cancelar reserva',
+      logoutTitle: 'Remover o login do Billberries?', logoutText: 'O servidor esquece o login do Billberries. Depois será necessário um novo login do Google.', remove: 'Remover',
+      checking: 'Verificando com o Billberries …', booking: 'Reservando …', bookedOk: 'Reservado: {table}, {day} {from}–{to}.',
+      bookUnconfirmed: 'Reserva não confirmada – verifique o calendário original antes de tentar de novo.',
+      cancelling: 'Cancelando …', cancelledOk: 'Reserva cancelada.', cancelUnconfirmed: 'Cancelamento não confirmado – verifique o calendário original.',
+      errTaken: 'Este horário acabou de ser reservado. Atualize.', errDuration: 'O Billberries não oferece essa duração aqui.',
+      errNoPlayer: 'O Billberries não pré-selecionou você como jogador.', errCannotCancel: 'Esta reserva não pode ser cancelada com a sua conta.',
+      errEndUnknown: 'Fim da reserva não encontrado.', errForm: 'Formulário de reserva ilegível – o Billberries pode ter mudado a página.',
+      errCalendar: 'Calendário ilegível – o Billberries pode ter mudado a página.', errOutOfRange: 'Data fora do período de reservas.',
+      errLoginNeeded: 'Login no Billberries necessário.', errServer: 'Erro do servidor {status}.', errRequest: 'O pedido foi recusado ({code}).',
+      'err.login-no-code': 'Nenhum código do Google encontrado no endereço colado.',
+      'err.login-rejected': 'O Billberries recusou o código. Cada código vale uma só vez e por pouco tempo – repita o login do Google.',
+      'err.login-unconfirmed': 'O Billberries não confirmou o login. Tente de novo.',
+      'err.conflict-unavailable': 'Este período já não pode ser reservado. Atualize.',
+      'err.conflict-table': 'A mesa {table} já está ocupada neste período.',
+      'err.conflict-mine': 'Você já reservou a mesa {table} neste período.',
+      'err.upstream-unreachable': 'O Billberries não está acessível.', 'err.upstream-status': 'O Billberries respondeu com o erro {status}.',
+      'err.internal': 'Erro interno do servidor.',
+      'bb.Partie-2-Personen': 'Partida (2 jogadores)', 'bb.Training-1-Person': 'Treino individual', 'bb.Suche Spielpartner': 'Procura parceiro',
+      'bb.??? - gerne dazubuchen': '??? – junte-se', 'bb.Mannschaftsspiel': 'Jogo de equipas', 'bb.Guest': 'Convidado',
+    },
+    nl: {
+      appTagline: 'BSC Karlsruhe · Tafelreservering', refresh: 'Vernieuwen', close: 'Sluiten', language: 'Taal',
+      heading: 'Wanneer wil je spelen?', loading: 'Kalender laden …',
+      loginTitle: 'Inloggen bij Billberries', loginIntro: 'De server heeft een Billberries-login nodig om voor je te reserveren. Dat is maar zelden nodig.',
+      loginOpen: 'Google-login openen',
+      loginOpenHint: 'Opent een nieuw tabblad. Na het inloggen toont Billberries “User email not available …” – <strong>dat is de bedoeling</strong>: de inlogcode staat alleen in het adres.',
+      loginCopy: 'Kopieer het volledige adres van die pagina en kom hier terug:', loginPaste: 'Plakken', loginPasteAlt: 'of hieronder plakken',
+      loginAddress: 'Adres van de Billberries-pagina', loginSubmit: 'Inloggen voltooien',
+      loginAfterOpen: 'Kopieer na de Google-login het adres van de Billberries-pagina en plak het hier.',
+      loginPasteDenied: 'Plakken is hier niet toegestaan – houd het veld lang ingedrukt en kies “Plakken”.', loginBusy: 'Inloggen …', loginDone: 'Ingelogd als {user}.',
+      mineTitle: 'Mijn reserveringen', dateTitle: 'Datum', datePick: 'Datum kiezen', startPick: 'Begintijd kiezen',
+      earlier: '30 minuten eerder', later: '30 minuten later', shorter: '30 minuten korter', longer: '30 minuten langer',
+      move: 'Verschuiven', timeHint: 'Tik op een begintijd · duur in stappen van 30 minuten', tableTitle: 'Tafel',
+      dayTitle: 'Bezet · {day}', noBookings: 'Nog geen reserveringen.',
+      settingsSummary: 'Tafels & voorkeuren',
+      settingsIntro: 'De vrije tafel in je voorkeursmaat wordt voorgeselecteerd, daarna met je voorkeurslaken; bij gelijkstand beslist jouw volgorde. Opgeslagen op de server voor al je apparaten.',
+      prefSize: 'Voorkeursmaat', prefCloth: 'Voorkeurslaken', orderTitle: 'Tafels en volgorde bij gelijkstand',
+      colTable: 'Tafel', colSize: 'Maat', colCloth: 'Laken', any: 'maakt niet uit', unknown: 'onbekend',
+      sizeOf: 'Maat van tafel {n}', clothOf: 'Laken van tafel {n}', up: 'Tafel {n} omhoog', down: 'Tafel {n} omlaag',
+      original: 'Origineel bij Billberries', logout: 'Billberries-login verwijderen',
+      today: 'Vandaag', tomorrow: 'Morgen', timeRange: '{day}, {from} – {to}', noFit: 'De duur past niet meer in de dag', noTimes: 'Geen reserveerbare tijden',
+      minutes: '{n} min', slotYou: 'Jij · {n}', slotFree: '{n} vrij', slotYouTitle: 'Je speelt: {table}', slotFreeTitle: '{n} tafels vrij',
+      tableName: 'Tafel {n}', favorite: 'Favoriet', free: 'vrij', booked: 'bezet',
+      hintClash: 'Je speelt op dit moment al aan {table} ({from}–{to}).', hintFree: '{free} van {total} tafels vrij voor de hele duur.',
+      hintNone: 'Geen tafel vrij voor de hele duur – verander de tijd of de duur.',
+      cancel: 'Annuleren', bookWait: 'Even geduld …', bookPickTime: 'Kies een tijd', bookClash: 'Je hebt op dit moment al een reservering',
+      bookNoTable: 'Geen tafel vrij', bookAction: '{table} · {from}–{to} reserveren',
+      asOf: 'Stand {time} · {n} dagen reserveerbaar', session: 'Billberries: {who}', sessionSince: 'Billberries: {who}, sinds {date}',
+      loggedIn: 'ingelogd', sessionOut: 'Billberries: niet ingelogd',
+      bookTitle: 'Reserveren', solo: 'Alleen trainen', duo: 'Met een partner', partner: 'Partner', partnerPlaceholder: 'Typ een naam …',
+      partnerHint: 'Kies uit de lijst; “Guest” voor gasten.', partnerInvalid: 'Kies een naam uit de lijst.', bookNow: 'Nu reserveren',
+      tableInfo: 'Tafel {n} · {size} · {cloth}',
+      cancelTitle: 'Reservering annuleren?', keep: 'Behouden', cancelConfirm: 'Reservering annuleren',
+      logoutTitle: 'Billberries-login verwijderen?', logoutText: 'De server vergeet de Billberries-login. Daarna is een nieuwe Google-login nodig.', remove: 'Verwijderen',
+      checking: 'Controleren bij Billberries …', booking: 'Reserveren …', bookedOk: 'Gereserveerd: {table}, {day} {from}–{to}.',
+      bookUnconfirmed: 'Reservering niet bevestigd – controleer de originele kalender voordat je het opnieuw probeert.',
+      cancelling: 'Annuleren …', cancelledOk: 'Reservering geannuleerd.', cancelUnconfirmed: 'Annulering niet bevestigd – controleer de originele kalender.',
+      errTaken: 'Dit tijdslot is net gereserveerd. Vernieuw de pagina.', errDuration: 'Billberries biedt deze duur hier niet aan.',
+      errNoPlayer: 'Billberries heeft jou niet als speler voorgeselecteerd.', errCannotCancel: 'Deze reservering kan met jouw account niet worden geannuleerd.',
+      errEndUnknown: 'Einde van de reservering niet gevonden.', errForm: 'Reserveringsformulier onleesbaar – Billberries heeft zijn pagina mogelijk gewijzigd.',
+      errCalendar: 'Kalender onleesbaar – Billberries heeft zijn pagina mogelijk gewijzigd.', errOutOfRange: 'Datum buiten de reserveringsperiode.',
+      errLoginNeeded: 'Billberries-login vereist.', errServer: 'Serverfout {status}.', errRequest: 'Het verzoek is geweigerd ({code}).',
+      'err.login-no-code': 'Geen Google-code gevonden in het geplakte adres.',
+      'err.login-rejected': 'Billberries heeft de code geweigerd. Elke code geldt maar één keer en kort – herhaal de Google-login.',
+      'err.login-unconfirmed': 'Billberries heeft de login niet bevestigd. Probeer het opnieuw.',
+      'err.conflict-unavailable': 'Deze periode is niet meer reserveerbaar. Vernieuw de pagina.',
+      'err.conflict-table': 'Tafel {table} is in deze periode al bezet.',
+      'err.conflict-mine': 'Je hebt in deze periode al tafel {table} gereserveerd.',
+      'err.upstream-unreachable': 'Billberries is niet bereikbaar.', 'err.upstream-status': 'Billberries antwoordde met fout {status}.',
+      'err.internal': 'Interne serverfout.',
+      'bb.Partie-2-Personen': 'Partij (2 spelers)', 'bb.Training-1-Person': 'Solotraining', 'bb.Suche Spielpartner': 'Zoekt partner',
+      'bb.??? - gerne dazubuchen': '??? – sluit je aan', 'bb.Mannschaftsspiel': 'Teamwedstrijd', 'bb.Guest': 'Gast',
+    },
+  };
+  const LOCALE_KEY = 'billberries-mobile-locale';
+  const browserLang = () => (navigator.languages || [navigator.language]).map(l => String(l).toLowerCase().split('-')[0]).find(l => I18N[l]) || 'en';
+  const browserTag = lang => (navigator.languages || [navigator.language]).find(l => String(l).toLowerCase().startsWith(lang)) || lang;
+  let lang = 'en', tag = 'en';
+  let dayFmt, timeFmt, dateOnlyFmt;
+  function setLocale(choice) {
+    lang = I18N[choice] ? choice : browserLang();
+    tag = browserTag(lang);
+    document.documentElement.lang = lang;
+    dayFmt = new Intl.DateTimeFormat(tag, { timeZone: 'UTC', weekday: 'short', day: '2-digit', month: '2-digit' });
+    timeFmt = new Intl.DateTimeFormat(tag, { timeZone: 'Europe/Berlin', hour: '2-digit', minute: '2-digit' });
+    dateOnlyFmt = new Intl.DateTimeFormat(tag, { dateStyle: 'medium' });
+  }
+  function t(key, params = {}) {
+    const text = I18N[lang][key] ?? I18N.en[key] ?? key;
+    return text.replace(/\{(\w+)\}/g, (m, name) => params[name] ?? m);
+  }
+  const bbText = line => I18N[lang]['bb.' + line] ?? line; // labels Billberries sends in German
+  function applyStatic() {
+    document.querySelectorAll('[data-i18n]').forEach(n => { n.textContent = t(n.dataset.i18n); });
+    document.querySelectorAll('[data-i18n-html]').forEach(n => { n.innerHTML = t(n.dataset.i18nHtml); }); // own, trusted strings only
+    document.querySelectorAll('[data-i18n-aria]').forEach(n => n.setAttribute('aria-label', t(n.dataset.i18nAria)));
+    document.querySelectorAll('[data-i18n-title]').forEach(n => { n.title = t(n.dataset.i18nTitle); });
+    const select = document.getElementById('language');
+    const saved = localStorage.getItem(LOCALE_KEY) || '';
+    // Compact labels keep the header on one line; the select's aria-label names it.
+    select.replaceChildren(new Option(`Auto · ${browserLang().toUpperCase()}`, ''),
+      ...Object.entries(LANGUAGES).map(([code, name]) => new Option(`${code.toUpperCase()} · ${name}`, code)));
+    select.value = saved;
+  }
+
+  // ---------- helpers ----------
+  const SLOT = 1800;
+  const HEADERS = { 'X-Requested-With': 'billberries-mobile' };
   const $ = id => document.getElementById(id);
-  const esc = text => String(text).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  let settings;
-  try { settings=JSON.parse(localStorage.getItem('billberries-mobile-settings')||'null'); } catch { settings=null; }
-  settings={tables:T.map(t=>({...t,...(settings?.tables?.find(x=>x.id===t.id)||{})})),size:settings?.size||T[0].size,cloth:settings?.cloth||'Simonis'};
-  const save=()=>localStorage.setItem('billberries-mobile-settings',JSON.stringify(settings));
-  const berlin = new Intl.DateTimeFormat('sv-SE',{timeZone:'Europe/Berlin',year:'numeric',month:'2-digit',day:'2-digit'});
-  const dateKey = n=>berlin.format(new Date(n));
-  const dayName = k=>new Intl.DateTimeFormat('de-DE',{weekday:'short',day:'2-digit',month:'2-digit',timeZone:'UTC'}).format(new Date(k+'T12:00:00Z'));
-  const time = epoch=>new Intl.DateTimeFormat('de-DE',{hour:'2-digit',minute:'2-digit',timeZone:'Europe/Berlin',hourCycle:'h23'}).format(new Date(epoch*1000));
-  const fmt = epoch=>dateKey(epoch*1000)+' '+time(epoch);
-  const state={days:new Map(),date:dateKey(Date.now()),start:null,len:2,table:null,loading:false,sequence:0};
-  function notice(msg){$('notice').textContent=msg||'';}
+  const el = (tagName, props = {}, ...children) => {
+    const node = Object.assign(document.createElement(tagName), props);
+    node.append(...children.filter(c => c != null && c !== false));
+    return node;
+  };
+  const berlinDate = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Berlin', year: 'numeric', month: '2-digit', day: '2-digit' });
+  const berlinClock = new Intl.DateTimeFormat('de-DE', { timeZone: 'Europe/Berlin', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }); // for logic, not display
+  const dateKey = ms => berlinDate.format(new Date(ms));
+  const hhmm = epoch => timeFmt.format(new Date(epoch * 1000));
+  const longDay = key => dayFmt.format(new Date(key + 'T12:00:00Z'));
+  const dayLabel = key => key === dateKey(Date.now()) ? t('today') : key === dateKey(Date.now() + 864e5) ? t('tomorrow') : longDay(key);
+  const norm = s => String(s || '').replace(/\s+/g, '').toLowerCase();
+  const nowEpoch = () => Date.now() / 1000;
+  const shown = lines => lines.filter(l => l !== 'None').map(bbText).join(' · ');
+
+  const state = {
+    days: new Map(), date: dateKey(Date.now()), start: null, len: 2, table: null,
+    busy: false, seq: 0, me: null, settings: null, status: null,
+  };
+
+  // ---------- server API ----------
   class LoginNeeded extends Error {}
-  async function api(path,options={}){
-    const r=await fetch(path,{credentials:'same-origin',cache:'no-store',...options,headers:{...HEADERS,...(options.headers||{})}});
-    if(r.status===401){showLogin(true);throw new LoginNeeded('Billberries-Anmeldung erforderlich.');}
-    if(!r.ok){let msg='Server-Fehler '+r.status;try{msg=(await r.json()).error||msg;}catch{}throw Error(msg);}
+  async function api(path, options = {}) {
+    const r = await fetch(path, { credentials: 'same-origin', cache: 'no-store', ...options, headers: { ...HEADERS, ...(options.headers || {}) } });
+    if (r.status === 401) { showLogin(true); throw new LoginNeeded(t('errLoginNeeded')); }
+    if (!r.ok) {
+      let body = {};
+      try { body = await r.json(); } catch {}
+      const key = 'err.' + body.code;
+      throw new Error(I18N[lang][key] || I18N.en[key] ? t(key, body.params || {}) : body.code ? t('errRequest', { code: body.code }) : t('errServer', { status: r.status }));
+    }
     return r;
   }
-  async function request(path,data){
-    const r=await api(path,data?{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams(data)}:{});
-    return new DOMParser().parseFromString(await r.text(),'text/html');
+  const getJSON = async path => (await api(path)).json();
+  const postJSON = async (path, body) => (await api(path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })).json();
+  async function billberriesPage(path, form) {
+    const options = form ? { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams(form) } : {};
+    return new DOMParser().parseFromString(await (await api(path, options)).text(), 'text/html');
   }
-  function posted(overrides){const {locationID,...fields}=overrides;return request(POST,fields);}
-  function error(e){if(e instanceof LoginNeeded){notice('');return;}notice(e.message||String(e)); console.error('Billberries Mobile:',e);}
-  function parseOverview(doc){
-    if(doc.querySelector('#login_google')){showLogin(true);throw new LoginNeeded('Billberries-Anmeldung erforderlich.');}
-    const days=new Map(), cells=[...doc.querySelectorAll('.bb_rs_table_cell')]; let current=null;
-    for(const cell of cells){
-      const m=(cell.getAttribute('style')||'').match(/grid-area:\s*(\d+)\s*\/\s*(\d+)\s*\/\s*span\s*(\d+)/);
-      if(!m)continue;
-      const [,r,c,span]=m.map(Number), cls=cell.firstElementChild?.className||'';
-      if(cls.includes('rs-col-header1')){
-        const d=cell.textContent.match(/(\d{2})\.(\d{2})\.(\d{4})/);
-        if(d){current={key:`${d[3]}-${d[2]}-${d[1]}`,rows:new Map(),slots:new Map(),bookings:[]};days.set(current.key,current);} continue;
+  const reservationForm = fields => billberriesPage('api/reservation', fields);
+
+  function notice(message, ok = false) { $('notice').textContent = message || ''; $('notice').className = ok ? 'ok' : ''; }
+  function error(e) { if (e instanceof LoginNeeded) return; notice(e.message || String(e)); console.error('Billberries Mobile:', e); }
+
+  // ---------- calendar ----------
+  function parseCalendar(doc) {
+    if (doc.querySelector('#login_google')) { showLogin(true); throw new LoginNeeded(t('errLoginNeeded')); }
+    const days = new Map();
+    let day = null;
+    for (const cell of doc.querySelectorAll('.bb_rs_table_cell')) {
+      const m = (cell.getAttribute('style') || '').match(/grid-area:\s*(\d+)\s*\/\s*(\d+)\s*\/\s*span\s*(\d+)/);
+      if (!m) continue;
+      const grid = +m[1], col = +m[2], span = +m[3];
+      const inner = cell.firstElementChild, cls = inner?.className || '';
+      if (cls.includes('rs-col-header1')) {
+        const d = cell.textContent.match(/(\d{2})\.(\d{2})\.(\d{4})/);
+        if (d) { day = { key: `${d[3]}-${d[2]}-${d[1]}`, grid: new Map(), free: new Map(), bookings: [], slots: [] }; days.set(day.key, day); }
+        continue;
       }
-      if(!current||c<1||c>6)continue;
-      if(c===1 && cls.includes('rs-row-header')){
-        const clock=cell.textContent.match(/(\d{2}):(\d{2})/);
-        if(clock)current.rows.set(r,{clock:`${clock[1]}:${clock[2]}`,row:null,epoch:null});
+      if (!day) continue;
+      if (col === 1) { if (cls.includes('rs-row-header')) day.grid.set(grid, { epoch: null, row: null }); continue; }
+      const id = (cell.id || '').match(/^(\d+)_(B\d{2})$/);
+      const click = (cell.getAttribute('onclick') || '').match(/doReservation\('(B\d{2})','(\d+)'\)/);
+      if (!id || !click || !day.grid.has(grid)) continue; // past slots ("too late") have neither
+      const epoch = +id[1], table = id[2], row = +click[2];
+      for (let k = 0; k < span; k++) {
+        const g = day.grid.get(grid + k);
+        if (g && g.epoch === null) { g.epoch = epoch + k * SLOT; g.row = row + k; }
       }
-      if(c>1){
-        const id=(cell.id||'').match(/^(\d+)_B0([1-5])$/), row=current.rows.get(r);
-        if(!row)continue;
-        const table=T[c-2]; if(!table)continue;
-        let epoch=id?Number(id[1]):null;
-        if(epoch){row.epoch=epoch;row.row=Number(cell.getAttribute('onclick')?.match(/,\s*'(\d+)'/)?.[1]||0);}
-        const booked=cls.includes('rs-item-booked');
-        if(booked&&epoch)current.bookings.push({table:table.id,epoch,span:Number(span),label:cell.textContent.trim().replace(/\s+/g,' '),row:row.row});
-        // A booked cell can span several rows; occupancy is filled after all rows are parsed.
-        const slot=current.slots.get(r)||{};slot[table.id]={free:!!id&&!booked,booked,epoch};current.slots.set(r,slot);
+      if (cls.includes('rs-item-booked')) {
+        const lines = [...inner.childNodes].filter(n => n.nodeType === Node.TEXT_NODE).map(n => n.textContent.trim()).filter(Boolean);
+        day.bookings.push({ day: day.key, table, row, epoch, end: epoch + span * SLOT, lines });
+      } else if (cls.includes('rs-item-not-booked')) {
+        if (!day.free.has(row)) day.free.set(row, new Set());
+        day.free.get(row).add(table);
       }
     }
-    for(const day of days.values()){
-      for(const b of day.bookings){
-        for(let i=0;i<b.span;i++){
-          const row=[...day.rows.entries()].find(([,v])=>v.epoch===b.epoch+i*1800)?.[0];
-          if(row!==undefined){const slot=day.slots.get(row)||{};slot[b.table]={free:false,booked:true,epoch:b.epoch+i*1800};day.slots.set(row,slot);}
-        }
-      }
-    }
-    if(!days.size)throw Error('Kalender konnte nicht gelesen werden; Billberries hat möglicherweise seine Seite geändert.');
+    for (const d of days.values()) d.slots = [...d.grid.values()].filter(g => g.epoch !== null).sort((a, b) => a.epoch - b.epoch);
+    if (!days.size) throw new Error(t('errCalendar'));
     return days;
   }
-  function rows(){return [...(state.days.get(state.date)?.rows.values()||[])].filter(r=>r.epoch&&r.row).sort((a,b)=>a.epoch-b.epoch);}
-  function availability(table,idx){const rs=rows(),d=state.days.get(state.date);if(idx<0||idx+state.len>rs.length)return false;for(let i=idx;i<idx+state.len;i++){const r=rs[i];if(i&&r.epoch!==rs[i-1].epoch+1800)return false;const entry=[...d.rows.entries()].find(([,v])=>v===r);if(!d.slots.get(entry[0])?.[table.id]?.free)return false;}return true;}
-  function score(t){return (t.size===settings.size?4:0)+(t.cloth===settings.cloth?2:0);}
-  function available(idx){return settings.tables.filter(t=>availability(t,idx)).sort((a,b)=>score(b)-score(a));}
-  function selectedIndex(){return rows().findIndex(r=>r.epoch===state.start);}
-  function ensureStart(){const rs=rows();if(!rs.length){state.start=null;return;}if(!rs.some(r=>r.epoch===state.start)){
-    const now=Math.floor(Date.now()/1000),tonight=state.date===dateKey(Date.now());
-    state.start=(rs.find(r=>r.epoch >= (tonight?Math.max(now+900,rs[0].epoch):rs.find(x=>time(x.epoch)>='18:00')?.epoch||rs[0].epoch))||rs[0]).epoch;
-  }}
-  function render(){
-    const rs=rows(),today=dateKey(Date.now()),keys=[...state.days.keys()];
-    $('dates').replaceChildren(...keys.slice(0,14).map(k=>{const b=document.createElement('button');b.className='pill'+(state.date===k?' active':'');b.textContent=k===today?'Heute':k===dateKey(Date.now()+86400000)?'Morgen':dayName(k);b.onclick=()=>setDate(k);return b;}));
-    $('dateInput').min=keys[0]||today;$('dateInput').max=keys.at(-1)||today;$('dateInput').value=state.date;
-    ensureStart();const idx=selectedIndex();
-    $('timeHead').textContent=idx>=0?`${time(state.start)} – ${time(state.start+state.len*1800)}`:'Keine Zeiten verfügbar';
-    $('duration').textContent=`${state.len*30} Min.`;
-    $('earlier').disabled=idx<=0;$('later').disabled=idx<0||idx>=rs.length-1;
-    $('shorter').disabled=state.len<=1;$('longer').disabled=state.len>=8;
-    const timeline=$('timeline');const previous=timeline.scrollLeft;timeline.replaceChildren(...rs.map((r,i)=>{
-      const b=document.createElement('button');const count=settings.tables.filter(t=>availability(t,i)).length;
-      b.className='slot '+(i>=idx&&i<idx+state.len?'sel':count?'free':'empty');b.innerHTML=`<b>${esc(time(r.epoch))}</b><small>${count} frei</small>`;b.title=`${time(r.epoch)}, ${count} Tische frei`;b.onclick=()=>{state.start=r.epoch;state.table=null;render();};return b;
-    }));timeline.scrollLeft=previous;
-    const av=idx<0?[]:available(idx);
-    if(state.table&&!av.some(t=>t.id===state.table))state.table=null;
-    if(!state.table)state.table=av[0]?.id||null;
-    $('tables').replaceChildren(...settings.tables.map(t=>{
-      const free=av.some(x=>x.id===t.id);const b=document.createElement('button');b.type='button';b.disabled=!free;
-      b.className='table'+(free?' good':' busy')+(state.table===t.id?' picked':'');
-      b.innerHTML=`<b>Tisch ${t.number}</b> ${score(t)>=6?'<span class="badge">Dein Favorit</span>':''}<small>${esc(t.size)} · ${esc(t.cloth)}</small><small>${free?'Frei':'Nicht verfügbar'}</small>`;
-      b.onclick=()=>{state.table=t.id;render();};return b;
+  const allBookings = () => [...state.days.values()].flatMap(d => d.bookings);
+  const isMine = b => !!state.me && b.lines.slice(0, 2).some(line => norm(line) === norm(state.me.name));
+  const myBookings = () => allBookings().filter(isMine).filter(b => b.end > nowEpoch()).sort((a, b) => a.epoch - b.epoch);
+  const currentDay = () => state.days.get(state.date);
+  const slots = () => currentDay()?.slots || [];
+  const startIndex = () => slots().findIndex(s => s.epoch === state.start);
+
+  function interval(i = startIndex(), len = state.len) {
+    const s = slots();
+    if (i < 0 || i + len > s.length) return null;
+    for (let k = 1; k < len; k++) if (s[i + k].epoch !== s[i].epoch + k * SLOT) return null;
+    return { start: s[i].epoch, end: s[i].epoch + len * SLOT, rows: s.slice(i, i + len).map(x => x.row) };
+  }
+  const overlaps = (a, b) => a.start < b.end && b.epoch < a.end;
+  const isFree = (tableId, i, len) => { const iv = interval(i, len); return !!iv && iv.rows.every(r => currentDay().free.get(r)?.has(tableId)); };
+  const myClash = (i, len) => { const iv = interval(i, len); return iv ? allBookings().filter(isMine).find(b => overlaps(iv, b)) : null; };
+
+  // ---------- table preferences ----------
+  const tables = () => state.settings.tables;
+  const tableById = id => tables().find(x => x.id === id);
+  const tableName = id => t('tableName', { n: tableById(id)?.number ?? id });
+  const prop = value => value || t('unknown');
+  const score = x => (state.settings.size && x.size === state.settings.size ? 2 : 0) + (state.settings.cloth && x.cloth === state.settings.cloth ? 1 : 0);
+  const byPreference = (a, b) => score(b) - score(a) || state.settings.order.indexOf(a.id) - state.settings.order.indexOf(b.id);
+  const freeTables = (i, len) => tables().filter(x => isFree(x.id, i, len)).sort(byPreference);
+  let saveTimer;
+  function saveSettings() {
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(async () => {
+      try { await postJSON('api/settings', state.settings); } catch (e) { error(e); }
+    }, 500);
+  }
+
+  // ---------- selection ----------
+  function ensureSelection() {
+    const s = slots();
+    if (!s.length) { state.start = null; state.table = null; return; }
+    if (!s.some(x => x.epoch === state.start)) {
+      // "Tonight" by default: from 18:00, or from now if later.
+      const evening = s.find(x => berlinClock.format(new Date(x.epoch * 1000)) >= '18:00')?.epoch ?? s[0].epoch;
+      const from = Math.max(evening, nowEpoch() - SLOT);
+      const bookable = i => freeTables(i, state.len).length && !myClash(i, state.len);
+      const i = s.findIndex((x, k) => x.epoch >= from && bookable(k));
+      const j = i >= 0 ? i : s.findIndex((x, k) => bookable(k));
+      state.start = s[j >= 0 ? j : 0].epoch;
+    }
+    if (!state.table || !isFree(state.table, startIndex(), state.len)) state.table = freeTables(startIndex(), state.len)[0]?.id || null;
+  }
+  function hasBookable(key) {
+    const current = state.date;
+    state.date = key;
+    const ok = slots().some((x, i) => freeTables(i, state.len).length && !myClash(i, state.len));
+    state.date = current;
+    return ok;
+  }
+  function selectDate(key, epoch = null) {
+    if (!state.days.has(key)) { notice(t('errOutOfRange')); return; }
+    state.date = key; state.start = epoch; state.table = null;
+    render(); scrollToSelection();
+  }
+  function scrollToSelection() { $('timeline').children[startIndex()]?.scrollIntoView({ block: 'nearest', inline: 'center' }); }
+
+  // ---------- rendering ----------
+  function bookingRow(b, { showDay }) {
+    const mine = isMine(b);
+    const when = `${showDay ? dayLabel(b.day) + ' · ' : ''}${hhmm(b.epoch)}–${hhmm(b.end)} · ${tableName(b.table)}`;
+    const what = el('div', { className: 'what' }, el('b', { textContent: when }), el('span', { className: 'muted', textContent: shown(b.lines) }));
+    if (showDay) { what.style.cursor = 'pointer'; what.onclick = () => selectDate(b.day, b.epoch); }
+    const cancel = mine && b.end > nowEpoch() ? el('button', { className: 'secondary danger', type: 'button', textContent: t('cancel'), onclick: () => cancelBooking(b) }) : null;
+    return el('div', { className: 'list-item' + (mine ? ' mine' : '') }, what, cancel);
+  }
+
+  function render() {
+    if (!state.settings) return;
+    ensureSelection();
+    const keys = [...state.days.keys()];
+    const myDays = new Set(myBookings().map(b => b.day));
+    $('dates').replaceChildren(...keys.map(k => el('button', { type: 'button', className: 'pill' + (k === state.date ? ' active' : '') + (myDays.has(k) ? ' has-mine' : ''), textContent: dayLabel(k), onclick: () => selectDate(k) })));
+    $('dateInput').min = keys[0] || ''; $('dateInput').max = keys.at(-1) || ''; $('dateInput').value = state.date;
+
+    const s = slots(), i = startIndex(), iv = interval(), clash = myClash(i, state.len);
+    $('timeHead').textContent = iv ? t('timeRange', { day: dayLabel(state.date), from: hhmm(iv.start), to: hhmm(iv.end) }) : t(s.length ? 'noFit' : 'noTimes');
+    $('duration').textContent = t('minutes', { n: state.len * 30 });
+    $('earlier').disabled = i <= 0; $('later').disabled = i < 0 || i >= s.length - 1;
+    $('shorter').disabled = state.len <= 1; $('longer').disabled = state.len >= 8;
+
+    const mineAt = epoch => allBookings().filter(isMine).find(b => b.epoch <= epoch && epoch < b.end);
+    const scroll = $('timeline').scrollLeft;
+    $('timeline').replaceChildren(...s.map((slot, k) => {
+      const own = mineAt(slot.epoch), count = freeTables(k, 1).length, selected = iv && slot.epoch >= iv.start && slot.epoch < iv.end;
+      return el('button', {
+        type: 'button', className: 'slot' + (own ? ' mine' : count ? ' free' : ' empty') + (selected ? ' sel' : '') + (selected && clash ? ' clash' : ''),
+        title: own ? t('slotYouTitle', { table: tableName(own.table) }) : t('slotFreeTitle', { n: count }),
+        onclick: () => { state.start = slot.epoch; render(); },
+      }, el('b', { textContent: hhmm(slot.epoch) }), el('small', { textContent: own ? t('slotYou', { n: tableById(own.table)?.number }) : t('slotFree', { n: count }) }));
     }));
-    $('tableHint').textContent=idx>=0?(av.length?`${av.length} Tisch${av.length===1?'':'e'} für die ganze Dauer frei`:'Für diese Zeit und Dauer kein Tisch frei. Zeit oder Dauer ändern.'):'Bitte ein Datum wählen.';
-    $('book').disabled=!state.table||state.loading;
-    $('book').textContent=state.table?`Tisch ${settings.tables.find(t=>t.id===state.table).number} · ${time(state.start)} prüfen`:'Keine freien Tische';
-    const d=state.days.get(state.date);const books=d?.bookings||[];
-    $('bookings').replaceChildren(...(books.length?books.slice(0,20).map(b=>{
-      const el=document.createElement('div');el.className='mine';const table=T.find(t=>t.id===b.table);el.append(document.createTextNode(`${time(b.epoch)} · Tisch ${table?.number}: ${b.label} `));
-      const btn=document.createElement('button');btn.className='secondary';btn.textContent='Ansehen';btn.onclick=()=>inspect(b);el.append(btn);return el;
-    }):[document.createTextNode('An diesem Tag noch keine Buchungen sichtbar.') ]));
-    $('subtitle').textContent=state.days.size?`Verfügbarkeiten für ${state.days.size} Tage · Stand ${new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})}`:'Verfügbarkeiten werden geladen …';
+    $('timeline').scrollLeft = scroll;
+
+    const free = new Set(freeTables(i, state.len).map(x => x.id));
+    const ranked = [...tables()].sort(byPreference);
+    $('tables').replaceChildren(...ranked.map((x, k) => el('button', {
+      type: 'button', disabled: !free.has(x.id),
+      className: 'table' + (free.has(x.id) ? ' free' : '') + (state.table === x.id ? ' picked' : ''),
+      onclick: () => { state.table = x.id; render(); },
+    }, el('b', { textContent: tableName(x.id) + ' ' }), k === 0 ? el('span', { className: 'badge', textContent: t('favorite') }) : null,
+       el('small', { textContent: `${prop(x.size)} · ${prop(x.cloth)}` }), el('small', { textContent: t(free.has(x.id) ? 'free' : 'booked') }))));
+    $('tableHint').textContent = !iv ? '' : clash ? t('hintClash', { table: tableName(clash.table), from: hhmm(clash.epoch), to: hhmm(clash.end) })
+      : free.size ? t('hintFree', { free: free.size, total: tables().length }) : t('hintNone');
+
+    const mine = myBookings();
+    $('mineCard').hidden = !mine.length;
+    $('mineList').replaceChildren(...mine.map(b => bookingRow(b, { showDay: true })));
+    const today = (currentDay()?.bookings || []).filter(b => b.end > nowEpoch()).sort((a, b) => a.epoch - b.epoch);
+    $('dayTitle').textContent = t('dayTitle', { day: dayLabel(state.date) });
+    $('dayList').replaceChildren(...(today.length ? today.map(b => bookingRow(b, { showDay: false })) : [document.createTextNode(t('noBookings'))]));
+
+    const book = $('book');
+    book.disabled = state.busy || !iv || !!clash || !state.table;
+    book.textContent = state.busy ? t('bookWait') : !iv ? t('bookPickTime') : clash ? t('bookClash')
+      : !state.table ? t('bookNoTable') : t('bookAction', { table: tableName(state.table), from: hhmm(iv.start), to: hhmm(iv.end) });
+    if (state.days.size) $('subtitle').textContent = t('asOf', { time: timeFmt.format(new Date()), n: state.days.size });
   }
-  function setDate(k){if(!state.days.has(k)){notice('Datum außerhalb des Buchungszeitraums.');return;}state.date=k;state.start=null;state.table=null;$('timeline').scrollLeft=0;render();const i=selectedIndex();$('timeline').children[i]?.scrollIntoView({block:'nearest',inline:'center'});}
-  async function load(){const seq=++state.sequence;state.loading=true;$('refresh').disabled=true;notice('');
-    try {const d=await request(OVERVIEW);if(seq!==state.sequence)return;state.days=parseOverview(d);showLogin(false);if(!state.days.has(state.date))state.date=[...state.days.keys()][0];render();status();}
-    catch(e){error(e);}finally{state.loading=false;$('refresh').disabled=false;render();}
+
+  function renderSettings() {
+    const s = state.settings;
+    const options = (select, values, current) => {
+      select.replaceChildren(new Option(t('any'), ''), ...[...new Set(values.filter(Boolean))].map(v => new Option(v, v)));
+      select.value = current || '';
+    };
+    options($('prefSize'), tables().map(x => x.size), s.size);
+    options($('prefCloth'), tables().map(x => x.cloth), s.cloth);
+    const move = (k, delta) => { const o = s.order; [o[k], o[k + delta]] = [o[k + delta], o[k]]; changed(); };
+    $('orderList').replaceChildren(...s.order.map((id, k) => {
+      const x = tableById(id);
+      const input = (key, label) => {
+        const field = el('input', { type: 'text', value: x[key], placeholder: t('unknown'), onchange: e => { x[key] = e.target.value.trim(); changed(); } });
+        field.setAttribute('aria-label', t(label, { n: x.number }));
+        return field;
+      };
+      const arrow = (text, label, delta, disabled) => {
+        const b = el('button', { className: 'icon', type: 'button', textContent: text, disabled, onclick: () => move(k, delta) });
+        b.setAttribute('aria-label', t(label, { n: x.number }));
+        return b;
+      };
+      return el('div', { className: 'order-row' }, el('span', { className: 'muted', textContent: `${k + 1}.` }), el('b', { textContent: String(x.number) }),
+        input('size', 'sizeOf'), input('cloth', 'clothOf'), arrow('↑', 'up', -1, k === 0), arrow('↓', 'down', 1, k === s.order.length - 1));
+    }));
   }
-  function matchScript(doc,regex){const value=[...doc.scripts].map(x=>x.textContent).join('\n').match(regex)?.[1];if(!value)throw Error('Reservierungsdaten nicht gefunden; die Billberries-Seite hat sich möglicherweise geändert.');return value;}
-  function dialogData(doc){
-    const options=sel=>[...(doc.querySelector(sel)?.options||[])].map(o=>({id:o.value,name:o.textContent.trim(),selected:o.selected}));
-    return {match:matchScript(doc,/getElementById\(["']rsMatchID["']\)\.value\s*=\s*["']([a-f0-9-]+)["']/),
-      start:Number(matchScript(doc,/getElementById\(["']rowIdx["']\)\.value\s*=\s*(\d+)/)),
-      p1:doc.querySelector('#player1Select')?.value,p1Name:doc.querySelector('#player1Select')?.selectedOptions?.[0]?.textContent?.trim(),p2:doc.querySelector('#player2Select')?.value,
-      mp:doc.querySelector('#mpSelect')?.value,end:options('#endSlotSelect'),players:options('#player2Select'),
-      canNew:!!doc.querySelector('#confReservation[onclick*="\'New\'"]'),
-      canCancel:!!doc.querySelector('#cancelReservation')};
+  function changed() { state.table = null; saveSettings(); renderSettings(); render(); }
+
+  function renderSession() {
+    const s = state.status;
+    if (!s) return;
+    const who = [s.user, state.me?.name && `(${state.me.name})`].filter(Boolean).join(' ') || t('loggedIn');
+    $('session').textContent = !s.loggedIn ? t('sessionOut') : s.loginAt ? t('sessionSince', { who, date: dateOnlyFmt.format(new Date(s.loginAt * 1000)) }) : t('session', { who });
   }
-  function summary(table,epoch,len){return `${dateKey(epoch*1000)} · ${time(epoch)}–${time(epoch+len*1800)} · Tisch ${table.number}`;}
-  function openModal(title,content){$('modalTitle').textContent=title;$('modalBody').replaceChildren(content);$('modal').showModal();}
-  async function inspect(b){
-    notice('');try{const doc=await posted({tableID:b.table,rowIdx:String(b.row)}),data=dialogData(doc);const t=T.find(x=>x.id===b.table);
-      const el=document.createElement('div');el.innerHTML=`<p>${esc(b.label)}</p><p class="muted">${esc(summary(t,b.epoch,b.span))}</p>`;
-      if(data.canCancel){const button=document.createElement('button');button.className='secondary danger';button.textContent='Eigene Reservierung stornieren';
-        button.onclick=async()=>{if(!confirm('Diese Reservierung wirklich stornieren?'))return;button.disabled=true;
-          try{const end=data.end.find(x=>x.selected)?.id;if(!end)throw Error('Endzeit der Buchung nicht gefunden.');
-            await posted({whatHasChanged:'updateReservation',newValue:'Cancel',tableID:b.table,rowIdx:String(data.start),rowIdxTo:end,locationID:'0001',rsMatchID:data.match,player1ID:data.p1,player2ID:data.p2||'',mpID:data.mp});
-            $('modal').close();await load();if(state.days.get(state.date)?.bookings.some(x=>x.epoch===b.epoch&&x.table===b.table))notice('Stornierung nicht bestätigt. Bitte Originalseite prüfen.');else notice('Reservierung storniert.');
-          }catch(e){button.disabled=false;error(e);}};el.append(button);
-      }else el.append(Object.assign(document.createElement('p'),{textContent:'Diese Buchung kann mit deinem Konto nicht storniert werden.'}));
-      openModal(`Tisch ${t.number}`,el);
-    }catch(e){error(e);}
+
+  // ---------- dialogs ----------
+  function sheet(title, build) {
+    return new Promise(resolve => {
+      const modal = $('modal');
+      let settled = false;
+      const done = value => { if (settled) return; settled = true; resolve(value); if (modal.open) modal.close(); };
+      $('modalTitle').textContent = title;
+      $('modalBody').replaceChildren(build(done));
+      modal.onclose = () => done(null);
+      modal.showModal();
+    });
   }
-  async function book(){const t=settings.tables.find(t=>t.id===state.table),idx=selectedIndex();if(!t||idx<0)return;const start=state.start,len=state.len;
-    $('book').disabled=true;notice('Prüfe Verfügbarkeit bei Billberries …');
-    try{const doc=await posted({tableID:t.id,rowIdx:String(rows()[idx].row)}),data=dialogData(doc);
-      if(!data.canNew||data.start!==rows()[idx].row)throw Error('Der gewählte Termin ist nicht mehr frei. Bitte aktualisieren.');
-      const end=String(data.start+len-1);
-      if(!data.end.some(o=>o.id===end))throw Error('Die gewählte Dauer wird von Billberries nicht angeboten.');
-      if(!data.p1||data.p1==='response_request_NotSelected')throw Error('Kein eingeloggter Spieler ausgewählt. Bitte Originalseite prüfen.');
-      const body=document.createElement('div');body.innerHTML=`<p class="muted">${esc(summary(t,start,len))}</p><label for="mode">Spielart</label><select id="mode"><option value="billard_training1">Einzeltraining</option><option value="billard_training2">Mit jemandem spielen</option></select><div id="partnerWrap" hidden><label for="partner">Mitspieler/in</label><input id="partner" type="text" list="partners" placeholder="Name eintippen, auch Gast möglich" autocomplete="off"><datalist id="partners"></datalist><p class="muted">Wähle einen Namen aus der Liste.</p></div><p class="muted">Erst „Jetzt reservieren“ legt die Buchung an.</p>`;
-      const mode=body.querySelector('#mode'),wrap=body.querySelector('#partnerWrap'),input=body.querySelector('#partner'),list=body.querySelector('#partners');
-      for(const p of data.players.filter(p=>p.name&&!p.name.includes('Not Selected')&&p.id!==data.p1)){const o=document.createElement('option');o.value=p.name;list.append(o);}
-      mode.onchange=()=>{wrap.hidden=mode.value==='billard_training1';};
-      const button=document.createElement('button');button.className='primary';button.textContent='Jetzt reservieren';body.append(button);
-      button.onclick=async()=>{const p=mode.value==='billard_training2'?data.players.find(x=>x.name.toLowerCase()===input.value.trim().toLowerCase()):null;
-        if(mode.value==='billard_training2'&&!p){alert('Bitte einen Mitspieler aus der Liste wählen.');return;}
-        button.disabled=true;button.textContent='Reserviere …';
-        try{await posted({whatHasChanged:'updateReservation',newValue:'New',tableID:t.id,rowIdx:String(data.start),rowIdxTo:end,locationID:'0001',rsMatchID:data.match,player1ID:data.p1,player2ID:p?.id||'',mpID:mode.value});
-          $('modal').close();await load();if(state.days.get(state.date)?.bookings.some(x=>x.table===t.id&&x.epoch===start&&data.p1Name&&x.label.includes(data.p1Name)))notice('Reservierung angelegt.');
-          else notice('Buchung nicht bestätigt. Bitte im Originalkalender prüfen, bevor du es erneut versuchst.');
-        }catch(e){button.disabled=false;button.textContent='Jetzt reservieren';error(e);}};
-      openModal('Reservierung prüfen',body);notice('');
-    }catch(e){error(e);}finally{$('book').disabled=false;}
+  const confirmSheet = (title, details, keepLabel, goLabel) => sheet(title, done => el('div', {}, ...details,
+    el('div', { className: 'row' }, el('button', { className: 'secondary grow', type: 'button', textContent: keepLabel, onclick: () => done(false) }),
+      el('button', { className: 'danger-btn grow', type: 'button', textContent: goLabel, onclick: () => done(true) }))));
+  function dialogData(doc) {
+    const script = [...doc.scripts].map(x => x.textContent).join('\n');
+    const find = re => { const v = script.match(re)?.[1]; if (!v) throw new Error(t('errForm')); return v; };
+    const options = sel => [...(doc.querySelector(sel)?.options || [])].map(o => ({ id: o.value, name: o.textContent.trim(), selected: o.selected }));
+    return {
+      match: find(/getElementById\(["']rsMatchID["']\)\.value\s*=\s*["']([a-f0-9-]+)["']/),
+      start: Number(find(/getElementById\(["']rowIdx["']\)\.value\s*=\s*(\d+)/)),
+      p1: doc.querySelector('#player1Select')?.value,
+      p1Name: doc.querySelector('#player1Select')?.selectedOptions?.[0]?.textContent?.trim(),
+      p2: doc.querySelector('#player2Select')?.value,
+      mp: doc.querySelector('#mpSelect')?.value,
+      end: options('#endSlotSelect'),
+      players: options('#player2Select'),
+      canNew: !!doc.querySelector('#confReservation[onclick*="\'New\'"]'),
+      canCancel: !!doc.querySelector('#cancelReservation'),
+    };
   }
-  function setupSettings(){
-    const opts=(el,values,current)=>{el.replaceChildren(...values.map(v=>{const o=document.createElement('option');o.value=v;o.textContent=v;return o;}));el.value=current;};
-    opts($('preferredSize'),[...new Set(settings.tables.map(t=>t.size))],settings.size);
-    opts($('preferredCloth'),[...new Set(settings.tables.map(t=>t.cloth))],settings.cloth);
-    $('preferredSize').onchange=e=>{settings.size=e.target.value;save();render();};
-    $('preferredCloth').onchange=e=>{settings.cloth=e.target.value;save();render();};
-    $('settingsTables').replaceChildren();
-    for(const t of settings.tables){const label=document.createElement('b');label.textContent=t.number;const size=document.createElement('input');size.type='text';size.value=t.size;size.setAttribute('aria-label',`Größe Tisch ${t.number}`);
-      const cloth=document.createElement('input');cloth.type='text';cloth.value=t.cloth;cloth.setAttribute('aria-label',`Tuch Tisch ${t.number}`);
-      for(const [el,key] of [[size,'size'],[cloth,'cloth']])el.onchange=()=>{t[key]=el.value.trim()||'Unbekannt';save();setupSettings();render();};
-      $('settingsTables').append(label,size,cloth);}
+  function busy(on) { state.busy = on; render(); }
+
+  async function book() {
+    const iv = interval(), x = tableById(state.table);
+    if (!iv || !x || myClash(startIndex(), state.len)) return;
+    busy(true); notice(t('checking'));
+    try {
+      const d = dialogData(await reservationForm({ tableID: x.id, rowIdx: String(iv.rows[0]) }));
+      const last = String(iv.rows.at(-1));
+      if (!d.canNew || d.start !== iv.rows[0]) throw new Error(t('errTaken'));
+      if (!d.end.some(o => o.id === last)) throw new Error(t('errDuration'));
+      if (!d.p1 || d.p1.startsWith('response_request_')) throw new Error(t('errNoPlayer'));
+      notice('');
+      const choice = await sheet(t('bookTitle'), done => {
+        let mode = 'billard_training1';
+        const partners = d.players.filter(p => p.name && !p.id.endsWith('NotSelected') && p.id !== d.p1);
+        const partner = el('input', { type: 'text', placeholder: t('partnerPlaceholder'), autocomplete: 'off' });
+        partner.setAttribute('list', 'partnerList');
+        const partnerBox = el('div', { hidden: true }, el('label', { textContent: t('partner') }), partner,
+          el('datalist', { id: 'partnerList' }, ...partners.map(p => el('option', { value: p.name }))),
+          el('p', { className: 'muted', textContent: t('partnerHint') }));
+        const solo = el('button', { type: 'button', textContent: t('solo') });
+        const duo = el('button', { type: 'button', textContent: t('duo') });
+        const pick = m => { mode = m; solo.setAttribute('aria-pressed', m === 'billard_training1'); duo.setAttribute('aria-pressed', m !== 'billard_training1'); partnerBox.hidden = m === 'billard_training1'; if (!partnerBox.hidden) partner.focus(); };
+        solo.onclick = () => pick('billard_training1'); duo.onclick = () => pick('billard_training2'); pick(mode);
+        const go = el('button', { className: 'primary', type: 'button', textContent: t('bookNow'), onclick: () => {
+          if (mode === 'billard_training1') return done({ mode });
+          const p = partners.find(q => norm(q.name) === norm(partner.value));
+          if (!p) { partner.setCustomValidity(t('partnerInvalid')); partner.reportValidity(); return; }
+          done({ mode, partner: p });
+        } });
+        partner.oninput = () => partner.setCustomValidity('');
+        return el('div', {}, el('p', { className: 'big', textContent: `${dayLabel(state.date)} · ${hhmm(iv.start)}–${hhmm(iv.end)}` }),
+          el('p', { className: 'muted', textContent: t('tableInfo', { n: x.number, size: prop(x.size), cloth: prop(x.cloth) }) }),
+          el('div', { className: 'segmented' }, solo, duo), partnerBox, go);
+      });
+      if (!choice) return;
+      notice(t('booking'));
+      await reservationForm({ whatHasChanged: 'updateReservation', newValue: 'New', tableID: x.id, rowIdx: String(d.start), rowIdxTo: last,
+        rsMatchID: d.match, player1ID: d.p1, player2ID: choice.partner?.id || '', mpID: choice.mode });
+      await load();
+      const ok = allBookings().some(b => b.table === x.id && b.epoch === iv.start && b.lines.slice(0, 2).some(l => norm(l) === norm(d.p1Name)));
+      notice(ok ? t('bookedOk', { table: tableName(x.id), day: dayLabel(state.date), from: hhmm(iv.start), to: hhmm(iv.end) }) : t('bookUnconfirmed'), ok);
+    } catch (e) { error(e); } finally { busy(false); }
   }
-  $('refresh').onclick=load;$('book').onclick=book;$('close').onclick=()=>$('modal').close();
-  $('dateInput').onchange=e=>setDate(e.target.value);
-  $('earlier').onclick=()=>{const i=selectedIndex();if(i>0){state.start=rows()[i-1].epoch;render();$('timeline').children[i-1]?.scrollIntoView({block:'nearest',inline:'center'});}};
-  $('later').onclick=()=>{const i=selectedIndex();if(i<rows().length-1){state.start=rows()[i+1].epoch;render();$('timeline').children[i+1]?.scrollIntoView({block:'nearest',inline:'center'});}};
-  $('shorter').onclick=()=>{state.len=Math.max(1,state.len-1);render();};$('longer').onclick=()=>{state.len=Math.min(8,state.len+1);render();};
-  function showLogin(on){$('bbLogin').hidden=!on;if(on)$('subtitle').textContent='Billberries-Anmeldung erforderlich';}
-  async function status(){try{const s=await (await api('api/status')).json();$('session').textContent=s.loggedIn?`Billberries: ${s.user||'angemeldet'}${s.loginAt?' seit '+new Date(s.loginAt*1000).toLocaleDateString('de-DE'):''}`:'Billberries: nicht angemeldet';}catch(e){}}
-  $('googleOpen').onclick=async()=>{const w=window.open('about:blank','_blank');try{const {url}=await (await api('api/google-url')).json();if(w)w.location=url;else location.href=url;$('bbLoginStatus').textContent='Nach der Google-Anmeldung die Adresse der Billberries-Seite kopieren und hier einfügen.';}catch(e){if(w)w.close();$('bbLoginStatus').textContent=e.message;}};
-  $('googlePaste').onclick=async()=>{try{$('googleCode').value=await navigator.clipboard.readText();}catch(e){$('bbLoginStatus').textContent='Einfügen nicht erlaubt – bitte lang ins Feld tippen und „Einfügen“ wählen.';$('googleCode').focus();}};
-  $('googleSubmit').onclick=async()=>{const b=$('googleSubmit');b.disabled=true;$('bbLoginStatus').textContent='Melde an …';
-    try{const r=await (await api('api/google-code',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:$('googleCode').value})})).json();$('googleCode').value='';$('bbLoginStatus').textContent='';showLogin(false);notice(`Angemeldet als ${r.user||'Billberries-Nutzer'}.`);await load();}
-    catch(e){$('bbLoginStatus').textContent=e.message;}finally{b.disabled=false;}};
-  $('bbLogout').onclick=async()=>{if(!confirm('Gespeicherte Billberries-Anmeldung auf dem Server löschen?'))return;try{await api('api/billberries-logout',{method:'POST'});showLogin(true);status();}catch(e){error(e);}};
-  setupSettings();load();
+
+  async function cancelBooking(b) {
+    const yes = await confirmSheet(t('cancelTitle'), [
+      el('p', { className: 'big', textContent: `${dayLabel(b.day)} · ${hhmm(b.epoch)}–${hhmm(b.end)} · ${tableName(b.table)}` }),
+      el('p', { className: 'muted', textContent: shown(b.lines) })], t('keep'), t('cancelConfirm'));
+    if (!yes) return;
+    busy(true); notice(t('cancelling'));
+    try {
+      const d = dialogData(await reservationForm({ tableID: b.table, rowIdx: String(b.row) }));
+      if (!d.canCancel) throw new Error(t('errCannotCancel'));
+      const end = d.end.find(o => o.selected)?.id;
+      if (!end) throw new Error(t('errEndUnknown'));
+      await reservationForm({ whatHasChanged: 'updateReservation', newValue: 'Cancel', tableID: b.table, rowIdx: String(d.start), rowIdxTo: end,
+        rsMatchID: d.match, player1ID: d.p1, player2ID: d.p2 || '', mpID: d.mp });
+      await load();
+      const gone = !allBookings().some(x => x.table === b.table && x.epoch === b.epoch);
+      notice(gone ? t('cancelledOk') : t('cancelUnconfirmed'), gone);
+    } catch (e) { error(e); } finally { busy(false); }
+  }
+
+  // ---------- loading & login ----------
+  async function load() {
+    const seq = ++state.seq;
+    $('refresh').disabled = true;
+    try {
+      const days = parseCalendar(await billberriesPage('api/calendar'));
+      if (seq !== state.seq) return;
+      state.days = days;
+      showLogin(false);
+      if (!days.has(state.date) || (!state.start && !hasBookable(state.date))) {
+        // e.g. late in the evening: start with the first day that still has a bookable interval
+        state.date = [...days.keys()].find(hasBookable) || [...days.keys()][0];
+      }
+      if (!state.me) { try { state.me = (await getJSON('api/me')).player; } catch (e) { if (!(e instanceof LoginNeeded)) console.warn(e); } }
+      render();
+      getJSON('api/status').then(s => { state.status = s; renderSession(); }).catch(() => {});
+    } catch (e) { error(e); } finally { $('refresh').disabled = false; render(); }
+  }
+  function showLogin(on) { $('bbLogin').hidden = !on; if (on) $('subtitle').textContent = t('errLoginNeeded'); }
+
+  $('googleOpen').onclick = async () => {
+    const tab = window.open('about:blank', '_blank');
+    try { const { url } = await getJSON('api/google-url'); if (tab) tab.location = url; else location.href = url; $('bbLoginStatus').textContent = t('loginAfterOpen'); }
+    catch (e) { if (tab) tab.close(); $('bbLoginStatus').textContent = e.message; }
+  };
+  $('googlePaste').onclick = async () => {
+    try { $('googleCode').value = await navigator.clipboard.readText(); }
+    catch { $('bbLoginStatus').textContent = t('loginPasteDenied'); $('googleCode').focus(); }
+  };
+  $('googleSubmit').onclick = async () => {
+    const button = $('googleSubmit'); button.disabled = true; $('bbLoginStatus').textContent = t('loginBusy');
+    try {
+      const r = await postJSON('api/google-code', { text: $('googleCode').value });
+      $('googleCode').value = ''; $('bbLoginStatus').textContent = ''; state.me = null;
+      showLogin(false); notice(t('loginDone', { user: r.user || 'Billberries' }), true); await load();
+    } catch (e) { $('bbLoginStatus').textContent = e.message; } finally { button.disabled = false; }
+  };
+  $('bbLogout').onclick = async () => {
+    if (!await confirmSheet(t('logoutTitle'), [el('p', { textContent: t('logoutText') })], t('keep'), t('remove'))) return;
+    try { await api('api/billberries-logout', { method: 'POST' }); state.me = null; state.days = new Map(); showLogin(true); render(); state.status = await getJSON('api/status'); renderSession(); } catch (e) { error(e); }
+  };
+
+  $('language').onchange = e => {
+    const choice = e.target.value;
+    if (choice) localStorage.setItem(LOCALE_KEY, choice); else localStorage.removeItem(LOCALE_KEY);
+    setLocale(choice); applyStatic(); notice('');
+    if (state.settings) renderSettings();
+    render(); renderSession();
+  };
+  $('refresh').onclick = () => { notice(''); load(); };
+  $('book').onclick = book;
+  $('modalClose').onclick = () => $('modal').close();
+  $('dateInput').onchange = e => selectDate(e.target.value);
+  const step = delta => { const i = startIndex(), s = slots(); if (s[i + delta]) { state.start = s[i + delta].epoch; render(); scrollToSelection(); } };
+  $('earlier').onclick = () => step(-1);
+  $('later').onclick = () => step(1);
+  $('shorter').onclick = () => { state.len = Math.max(1, state.len - 1); render(); };
+  $('longer').onclick = () => { state.len = Math.min(8, state.len + 1); render(); };
+  $('prefSize').onchange = e => { state.settings.size = e.target.value; changed(); };
+  $('prefCloth').onchange = e => { state.settings.cloth = e.target.value; changed(); };
+
+  setLocale(localStorage.getItem(LOCALE_KEY) || '');
+  applyStatic();
+  (async () => {
+    try { state.settings = await getJSON('api/settings'); } catch (e) { error(e); return; }
+    renderSettings();
+    await load();
+    scrollToSelection();
+  })();
 })();
 </script>
+</body>
 </html>
