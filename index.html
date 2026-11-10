@@ -140,7 +140,7 @@ dialog .card { margin: 0; box-shadow: none; }
     <p class="muted" id="tableHint"></p>
   </section>
 
-  <section class="card">
+  <section class="card" id="dayCard" hidden>
     <div class="subtitle" id="dayTitle"></div>
     <div id="dayList" class="muted"></div>
   </section>
@@ -189,7 +189,7 @@ dialog .card { margin: 0; box-shadow: none; }
       mineTitle: 'My reservations', dateTitle: 'Date', datePick: 'Choose date', startPick: 'Choose start time',
       earlier: '30 minutes earlier', later: '30 minutes later', shorter: '30 minutes shorter', longer: '30 minutes longer',
       move: 'Move', timeHint: 'Tap a start time · duration in 30-minute steps', tableTitle: 'Table',
-      dayTitle: 'Booked · {day}', noBookings: 'No reservations yet.',
+      dayTitle: 'All reservations · {day}',
       settingsSummary: 'Tables & preferences',
       settingsIntro: 'The free table with your preferred size is preselected, then your preferred cloth; ties are broken by your order. Stored on the server for all your devices.',
       prefSize: 'Preferred size', prefCloth: 'Preferred cloth', orderTitle: 'Tables and order for ties',
@@ -242,7 +242,7 @@ dialog .card { margin: 0; box-shadow: none; }
       mineTitle: 'Meine Reservierungen', dateTitle: 'Datum', datePick: 'Datum wählen', startPick: 'Startzeit wählen',
       earlier: '30 Minuten früher', later: '30 Minuten später', shorter: '30 Minuten kürzer', longer: '30 Minuten länger',
       move: 'Verschieben', timeHint: 'Startzeit antippen · Dauer in 30-Minuten-Schritten', tableTitle: 'Tisch',
-      dayTitle: 'Belegt · {day}', noBookings: 'Noch keine Reservierungen.',
+      dayTitle: 'Alle Reservierungen · {day}',
       settingsSummary: 'Tische & Vorlieben',
       settingsIntro: 'Vorgewählt wird der freie Tisch in deiner bevorzugten Größe, dann mit deinem bevorzugten Tuch; bei Gleichstand entscheidet deine Reihenfolge. Gespeichert auf dem Server, gilt für alle Geräte.',
       prefSize: 'Bevorzugte Größe', prefCloth: 'Bevorzugtes Tuch', orderTitle: 'Tische und Reihenfolge bei Gleichstand',
@@ -295,7 +295,7 @@ dialog .card { margin: 0; box-shadow: none; }
       mineTitle: 'Mes réservations', dateTitle: 'Date', datePick: 'Choisir la date', startPick: 'Choisir l’heure de début',
       earlier: '30 minutes plus tôt', later: '30 minutes plus tard', shorter: '30 minutes de moins', longer: '30 minutes de plus',
       move: 'Décaler', timeHint: 'Touche une heure de début · durée par tranches de 30 minutes', tableTitle: 'Table',
-      dayTitle: 'Occupé · {day}', noBookings: 'Pas encore de réservations.',
+      dayTitle: 'Toutes les réservations · {day}',
       settingsSummary: 'Tables et préférences',
       settingsIntro: 'La table libre de ta taille préférée est présélectionnée, puis celle de ton tapis préféré ; en cas d’égalité, ton ordre décide. Enregistré sur le serveur pour tous tes appareils.',
       prefSize: 'Taille préférée', prefCloth: 'Tapis préféré', orderTitle: 'Tables et ordre en cas d’égalité',
@@ -348,7 +348,7 @@ dialog .card { margin: 0; box-shadow: none; }
       mineTitle: 'Mis reservas', dateTitle: 'Fecha', datePick: 'Elegir fecha', startPick: 'Elegir hora de inicio',
       earlier: '30 minutos antes', later: '30 minutos después', shorter: '30 minutos menos', longer: '30 minutos más',
       move: 'Mover', timeHint: 'Toca una hora de inicio · duración en pasos de 30 minutos', tableTitle: 'Mesa',
-      dayTitle: 'Ocupado · {day}', noBookings: 'Aún no hay reservas.',
+      dayTitle: 'Todas las reservas · {day}',
       settingsSummary: 'Mesas y preferencias',
       settingsIntro: 'Se preselecciona la mesa libre de tu tamaño preferido y luego de tu paño preferido; en caso de empate decide tu orden. Guardado en el servidor para todos tus dispositivos.',
       prefSize: 'Tamaño preferido', prefCloth: 'Paño preferido', orderTitle: 'Mesas y orden en caso de empate',
@@ -401,7 +401,7 @@ dialog .card { margin: 0; box-shadow: none; }
       mineTitle: 'Le mie prenotazioni', dateTitle: 'Data', datePick: 'Scegli la data', startPick: 'Scegli l’ora di inizio',
       earlier: '30 minuti prima', later: '30 minuti dopo', shorter: '30 minuti in meno', longer: '30 minuti in più',
       move: 'Sposta', timeHint: 'Tocca un’ora di inizio · durata in passi di 30 minuti', tableTitle: 'Tavolo',
-      dayTitle: 'Occupato · {day}', noBookings: 'Ancora nessuna prenotazione.',
+      dayTitle: 'Tutte le prenotazioni · {day}',
       settingsSummary: 'Tavoli e preferenze',
       settingsIntro: 'Viene preselezionato il tavolo libero della misura preferita, poi del panno preferito; a parità decide il tuo ordine. Salvato sul server per tutti i tuoi dispositivi.',
       prefSize: 'Misura preferita', prefCloth: 'Panno preferito', orderTitle: 'Tavoli e ordine a parità',
@@ -454,7 +454,7 @@ dialog .card { margin: 0; box-shadow: none; }
       mineTitle: 'Minhas reservas', dateTitle: 'Data', datePick: 'Escolher data', startPick: 'Escolher horário de início',
       earlier: '30 minutos mais cedo', later: '30 minutos mais tarde', shorter: '30 minutos a menos', longer: '30 minutos a mais',
       move: 'Mover', timeHint: 'Toque num horário de início · duração em passos de 30 minutos', tableTitle: 'Mesa',
-      dayTitle: 'Ocupado · {day}', noBookings: 'Ainda não há reservas.',
+      dayTitle: 'Todas as reservas · {day}',
       settingsSummary: 'Mesas e preferências',
       settingsIntro: 'É pré-selecionada a mesa livre no seu tamanho preferido, depois com o seu pano preferido; em caso de empate, decide a sua ordem. Salvo no servidor para todos os seus dispositivos.',
       prefSize: 'Tamanho preferido', prefCloth: 'Pano preferido', orderTitle: 'Mesas e ordem em caso de empate',
@@ -507,7 +507,7 @@ dialog .card { margin: 0; box-shadow: none; }
       mineTitle: 'Mijn reserveringen', dateTitle: 'Datum', datePick: 'Datum kiezen', startPick: 'Begintijd kiezen',
       earlier: '30 minuten eerder', later: '30 minuten later', shorter: '30 minuten korter', longer: '30 minuten langer',
       move: 'Verschuiven', timeHint: 'Tik op een begintijd · duur in stappen van 30 minuten', tableTitle: 'Tafel',
-      dayTitle: 'Bezet · {day}', noBookings: 'Nog geen reserveringen.',
+      dayTitle: 'Alle reserveringen · {day}',
       settingsSummary: 'Tafels & voorkeuren',
       settingsIntro: 'De vrije tafel in je voorkeursmaat wordt voorgeselecteerd, daarna met je voorkeurslaken; bij gelijkstand beslist jouw volgorde. Opgeslagen op de server voor al je apparaten.',
       prefSize: 'Voorkeursmaat', prefCloth: 'Voorkeurslaken', orderTitle: 'Tafels en volgorde bij gelijkstand',
@@ -797,7 +797,8 @@ dialog .card { margin: 0; box-shadow: none; }
     $('mineList').replaceChildren(...mine.map(b => bookingRow(b, { showDay: true })));
     const today = (currentDay()?.bookings || []).filter(b => b.end > nowEpoch()).sort((a, b) => a.epoch - b.epoch);
     $('dayTitle').textContent = t('dayTitle', { day: dayLabel(state.date) });
-    $('dayList').replaceChildren(...(today.length ? today.map(b => bookingRow(b, { showDay: false })) : [document.createTextNode(t('noBookings'))]));
+    $('dayCard').hidden = !today.length; // all reservations of the selected day (anyone's); omitted when there are none
+    $('dayList').replaceChildren(...today.map(b => bookingRow(b, { showDay: false })));
 
     const book = $('book');
     book.disabled = state.busy || !iv || !!clash || !state.table;
